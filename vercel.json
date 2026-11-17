@@ -1,1 +1,18 @@
-
+{
+  "rewrites": [
+    { "source": "/", "destination": "/NEXO_Pay_Updated.html" },
+    { "source": "/pay", "destination": "/NEXO_Pay_Updated.html" },
+    { "source": "/business", "destination": "/NEXO_Business_Updated.html" },
+    { "source": "/card", "destination": "/NEXO_Card_Updated.html" },
+    { "source": "/admin", "destination": "/NEXO_Admin.html" }
+  ],
+  "headers": [
+    {
+      "source": "/firebase-messaging-sw.js",
+      "headers": [
+        { "key": "Service-Worker-Allowed", "value": "/" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
+  ]
+}
