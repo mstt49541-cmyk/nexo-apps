@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>NEXO Admin - Operations Console</title>
+<meta name="theme-color" content="#000000" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23181b24'/%3E%3Cstop offset='100%25' stop-color='%23050608'/%3E%3C/linearGradient%3E%3ClinearGradient id='hx' x1='96' y1='64' x2='416' y2='448' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23ffffff'/%3E%3Cstop offset='100%25' stop-color='%2394a3b8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='118' fill='url(%23bg)'/%3E%3Crect x='14' y='14' width='484' height='484' rx='106' fill='none' stroke='%230075eb' stroke-opacity='.28' stroke-width='8'/%3E%3Cpath d='M256 76L412 166V346L256 436L100 346V166L256 76Z' fill='none' stroke='url(%23hx)' stroke-width='24' stroke-linejoin='round'/%3E%3Cpath d='M256 146L350 188V258C350 315 310 358 256 376C202 358 162 315 162 258V188L256 146Z' fill='%230075eb' fill-opacity='.22' stroke='%230075eb' stroke-width='16' stroke-linejoin='round'/%3E%3Cpath d='M214 292V214L256 260L298 214V292' fill='none' stroke='%23ffffff' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-admin.png" />
+<link rel="manifest" href="/manifest-admin.json" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="NEXO Admin" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet' />
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+<style>
+:root{
+    --bg-color:#000000;
+    --app-bg:#000000;
+    --card-bg:#16171a;
+    --card-elevated:#1f2126;
+    --input-bg:#1c1d21;
+    --primary:#ffffff;
+    --primary-ink:#000000;
+    --accent:#0075eb;
+    --accent-soft:rgba(0,117,235,.15);
+    --text-main:#ffffff;
+    --text-muted:#8b919a;
+    --border-color:rgba(255,255,255,.08);
+    --hairline:rgba(255,255,255,.06);
+    --success:#00c48c;
+    --danger:#ff4560;
+    --warn:#f59e0b;
+    --wa-bg:#000000;
+    --wa-in:#16171a;
+    --wa-in-ink:#ffffff;
+    --wa-out:#0075eb;
+    --wa-out-ink:#ffffff;
+    --wa-tick:#bae6fd;
+    --wa-accent:#0075eb;
+    --shadow:0 24px 60px rgba(0,0,0,.9);
+    --spring:cubic-bezier(.22,1,.36,1);
+}
+body.light-theme{
+    --bg-color:#e5e7eb;
+    --app-bg:#f7f7f9;
+    --card-bg:#ffffff;
+    --card-elevated:#f0f2f5;
+    --input-bg:#ffffff;
+    --primary:#191c1f;
+    --primary-ink:#ffffff;
+    --accent:#0075eb;
+    --accent-soft:rgba(0,117,235,.1);
+    --text-main:#191c1f;
+    --text-muted:#6c737f;
+    --border-color:rgba(25,28,31,.08);
+    --hairline:rgba(25,28,31,.06);
+    --success:#009e6f;
+    --danger:#e12d4b;
+    --wa-bg:#f7f7f9;
+    --wa-in:#ffffff;
+    --wa-in-ink:#191c1f;
+    --wa-out:#0075eb;
+    --wa-out-ink:#ffffff;
+    --wa-tick:#bae6fd;
+    --wa-accent:#0075eb;
+    --shadow:0 24px 60px rgba(15,23,42,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;overflow:hidden;position:fixed;inset:0;background:var(--bg-color);color:var(--text-main);-webkit-font-smoothing:antialiased;transition:background-color .28s var(--spring),color .25s}
+body{display:flex;justify-content:center;align-items:center}
+.app-container{width:100%;max-width:380px;height:100%;max-height:820px;background:var(--app-bg);padding:16px 18px 0;box-shadow:var(--shadow);border:1px solid var(--border-color);position:relative;display:flex;flex-direction:column;overflow:hidden;z-index:1}
+.screen{display:flex;flex-direction:column;height:100%;width:100%;opacity:1;transition:opacity .26s var(--spring),transform .28s var(--spring)}
+.mono{font-family:'JetBrains Mono',monospace}
+.num-tab{font-variant-numeric:tabular-nums}
+
+/* Splash */
+.splash-screen{position:absolute;inset:0;background:var(--app-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:999;transition:opacity .32s var(--spring)}
+.splash-emblem-wrap{position:relative;width:116px;height:116px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.splash-pulse-ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(0,117,235,.4);animation:splashPulse 2.2s cubic-bezier(.16,1,.3,1) infinite}
+.splash-pulse-ring.delay{animation-delay:.7s;border-color:rgba(255,255,255,.16)}
+body.light-theme .splash-pulse-ring.delay{border-color:rgba(25,28,31,.14)}
+@keyframes splashPulse{0%{transform:scale(.62);opacity:.85}100%{transform:scale(1.18);opacity:0}}
+.splash-mark,.splash-logo-box{width:76px;height:76px;border-radius:23px;background:linear-gradient(145deg,#1d2028,#0d0f13);border:1.5px solid rgba(0,117,235,.32);display:flex;align-items:center;justify-content:center;box-shadow:0 16px 36px rgba(0,0,0,.65);position:relative;z-index:2;animation:splashFloat 2.4s ease-in-out infinite}
+body.light-theme .splash-mark,body.light-theme .splash-logo-box{background:linear-gradient(145deg,#1d2028,#0d0f13)!important;border-color:rgba(0,117,235,.28)!important;box-shadow:0 6px 18px rgba(15,23,42,.12)!important}
+@keyframes splashFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.splash-track{width:136px;height:3px;border-radius:99px;background:var(--border-color);overflow:hidden;margin-top:16px}
+.splash-fill{width:42%;height:100%;background:linear-gradient(90deg,#0075eb,#60a5fa);border-radius:99px;animation:slideLoad 1.1s ease-in-out infinite}
+@keyframes slideLoad{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+
+/* Home Header & Tab Headers */
+.home-header{display:flex;justify-content:space-between;align-items:center;padding:2px 0 14px;flex-shrink:0}
+.home-prof-trigger{display:flex;align-items:center;gap:11px;cursor:pointer;min-width:0;flex:1}
+.home-prof-trigger:active{opacity:.82}
+.home-avatar-lg{width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,#252832,#14161b);border:1.5px solid rgba(255,255,255,.14);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:26px;transition:transform .18s var(--spring)}
+body.light-theme .home-avatar-lg{background:#ffffff;border-color:rgba(25,28,31,.09);color:var(--accent)}
+.home-prof-trigger:active .home-avatar-lg{transform:scale(.94)}
+.home-prof-meta{min-width:0}
+.home-prof-meta h2{font-size:15.5px;font-weight:800;letter-spacing:-.25px;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-prof-meta p{font-size:11px;font-weight:600;color:var(--text-muted);margin-top:1px}
+
+.tab-header{display:flex;justify-content:space-between;align-items:center;padding:4px 0 12px;flex-shrink:0}
+.tab-header h2{font-size:19px;font-weight:800;letter-spacing:-.35px;color:var(--text-main)}
+.tab-action-link{background:none;border:none;color:var(--accent);font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 6px}
+
+.icon-btn{width:40px;height:40px;border-radius:50%;background:var(--card-bg);border:1px solid var(--border-color);color:var(--text-main);font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s var(--spring),background-color .2s;flex-shrink:0}
+.icon-btn:active{transform:scale(.92);background:var(--card-elevated)}
+.top-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;flex-shrink:0}
+.back-btn{width:38px;height:38px;border-radius:50%;background:var(--card-bg);border:1px solid var(--border-color);color:var(--text-main);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform .18s var(--spring)}
+.back-btn:active{transform:scale(.9)}
+
+/* Bottom Nav (Clean 4-Tab Bar) */
+.bottom-nav{position:absolute;bottom:14px;left:14px;right:14px;height:60px;background:rgba(22,23,26,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:28px;border:1px solid var(--border-color);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:2px 8px;z-index:100;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+body.light-theme .bottom-nav{background:rgba(255,255,255,.94);border-color:rgba(25,28,31,.08);box-shadow:0 4px 18px rgba(15,23,42,.06)}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-muted);cursor:pointer;position:relative;height:100%;transition:color .18s,transform .16s var(--spring)}
+.nav-item:active{transform:scale(.92)}
+.nav-item.active{color:var(--accent)}
+.nav-item i{font-size:21px;line-height:1}
+.nav-item span{font-size:10px;font-weight:700;letter-spacing:.1px;line-height:1.15}
+.nav-badge{position:absolute;top:7px;right:22%;min-width:16px;height:16px;padding:0 4px;border-radius:10px;background:var(--accent);color:#fff;font-size:9px;font-weight:800;display:none;align-items:center;justify-content:center}
+
+/* Scrollable Canvas */
+.dashboard-body{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:88px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+.dashboard-body::-webkit-scrollbar{display:none}
+.dashboard-tab{animation:tabIn .22s var(--spring)}
+@keyframes tabIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Shimmer Loading Skeletons */
+.skel-line{height:12px;border-radius:8px;background:linear-gradient(90deg,var(--card-elevated) 25%,rgba(140,148,160,.16) 50%,var(--card-elevated) 75%);background-size:200% 100%;animation:skelShimmer 1.25s infinite}
+@keyframes skelShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sync-banner{display:none;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:600;color:var(--text-muted);padding:6px 12px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:12px;margin-bottom:12px}
+.sync-spinner{width:12px;height:12px;border:2px solid var(--border-color);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Revolut Hero & Surfaces */
+.rev-hero{background:linear-gradient(155deg,#1d1f26 0%,#121317 100%);border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 12px 28px rgba(0,0,0,.4)}
+body.light-theme .rev-hero{background:#ffffff;border-color:rgba(25,28,31,.08);box-shadow:0 2px 12px rgba(15,23,42,.035)}
+.rev-hero.interactive{cursor:pointer;transition:transform .18s var(--spring)}
+.rev-hero.interactive:active{transform:scale(.985)}
+.rev-hero-label{font-size:11px;font-weight:600;color:var(--text-muted)}
+.rev-hero-amt{font-size:31px;font-weight:800;letter-spacing:-1px;margin:4px 0 14px;color:var(--text-main)}
+.rev-split{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:12px;border-top:1px solid var(--hairline)}
+.rev-split-cell{text-align:left;cursor:pointer;padding:4px 6px;border-radius:10px;transition:background-color .18s}
+.rev-split-cell:active{background:var(--card-elevated)}
+.rev-split-cell span{display:block;font-size:10px;font-weight:600;color:var(--text-muted);margin-bottom:2px}
+.rev-split-cell strong{font-size:12px;font-weight:700;color:var(--text-main)}
+
+/* Admin Profile Hero */
+.profile-avatar-xl{width:84px;height:84px;border-radius:26px;background:linear-gradient(145deg,#252832,#14161b);border:1.5px solid rgba(255,255,255,.14);color:var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;position:relative}
+body.light-theme .profile-avatar-xl{background:#f0f2f5;border-color:rgba(25,28,31,.1);color:var(--accent)}
+.profile-verify-dot{position:absolute;right:-3px;bottom:-3px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;border:2.5px solid var(--card-bg);display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* Revolut Action Circles Row */
+.rev-actions-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.rev-act-btn{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;color:var(--text-main)}
+.rev-act-circle{width:48px;height:48px;border-radius:50%;background:var(--card-bg);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text-main);transition:transform .16s var(--spring),background-color .16s}
+.rev-act-btn:active .rev-act-circle{transform:scale(.9);background:var(--card-elevated)}
+.rev-act-btn.primary .rev-act-circle{background:var(--primary);color:var(--primary-ink);border-color:transparent}
+.rev-act-btn span{font-size:10.5px;font-weight:600;color:var(--text-muted);white-space:nowrap}
+
+/* Quiet Metric Strip */
+.metric-strip{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card-bg);border:1px solid var(--border-color);border-radius:18px;margin-bottom:16px;overflow:hidden}
+body.light-theme .metric-strip{box-shadow:0 2px 10px rgba(15,23,42,.03)}
+.metric-cell{padding:11px 10px;text-align:center;cursor:pointer;border-right:1px solid var(--hairline);transition:background-color .16s}
+.metric-cell:last-child{border-right:none}
+.metric-cell:active{background:var(--card-elevated)}
+.metric-cell strong{display:block;font-size:16px;font-weight:800;color:var(--text-main)}
+.metric-cell span{font-size:10px;font-weight:600;color:var(--text-muted)}
+
+/* Section Header */
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin:4px 0 9px;padding:0 2px}
+.sec-head h4{font-size:13px;font-weight:700;color:var(--text-main)}
+.sec-head button,.sec-head span{font-size:11.5px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer}
+.sec-head .muted{color:var(--text-muted);cursor:default}
+
+/* Grouped List */
+.rev-group{background:var(--card-bg);border:1px solid var(--border-color);border-radius:18px;overflow:hidden;margin-bottom:14px}
+body.light-theme .rev-group{box-shadow:0 2px 10px rgba(15,23,42,.03)}
+.rev-row{display:flex;align-items:center;justify-content:space-between;gap:11px;padding:12px 14px;border-bottom:1px solid var(--hairline);cursor:pointer;transition:background-color .16s}
+.rev-row:last-child{border-bottom:none}
+.rev-row:active{background:var(--card-elevated)}
+.rev-row-left{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+.rev-ico{width:38px;height:38px;border-radius:50%;background:var(--card-elevated);color:var(--text-main);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0}
+.rev-meta{min-width:0;flex:1}
+.rev-meta h5{font-size:13px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.rev-meta p{font-size:11px;font-weight:500;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rev-right{text-align:right;flex-shrink:0}
+.rev-right strong{display:block;font-size:13px;font-weight:700;color:var(--text-main)}
+.rev-right small{display:block;font-size:10px;font-weight:600;color:var(--text-muted);margin-top:1px}
+
+/* Segmented Tabs */
+.seg-bar{position:relative;display:grid;background:var(--card-bg);border:1px solid var(--border-color);padding:3px;border-radius:12px;margin-bottom:11px;overflow:hidden;flex-shrink:0}
+.seg-bar.c2{grid-template-columns:repeat(2,1fr)}
+.seg-bar.c3{grid-template-columns:repeat(3,1fr)}
+.seg-bar.c4{grid-template-columns:repeat(4,1fr)}
+.seg-bar.c5{grid-template-columns:repeat(5,1fr)}
+.seg-thumb{position:absolute;top:3px;left:3px;bottom:3px;border-radius:9px;background:var(--card-elevated);border:1px solid var(--border-color);transition:transform .32s var(--spring);z-index:1;pointer-events:none}
+body.light-theme .seg-thumb{background:#ffffff;box-shadow:0 1px 4px rgba(15,23,42,.08);border-color:transparent}
+body.light-theme .seg-bar{background:#e9ebef;border-color:transparent}
+.seg-bar.c2 .seg-thumb{width:calc((100% - 6px)/2)}
+.seg-bar.c3 .seg-thumb{width:calc((100% - 6px)/3)}
+.seg-bar.c4 .seg-thumb{width:calc((100% - 6px)/4)}
+.seg-bar.c5 .seg-thumb{width:calc((100% - 6px)/5)}
+.seg-btn{position:relative;z-index:2;padding:7px 2px;border:none;background:transparent;color:var(--text-muted);font-size:11px;font-weight:700;cursor:pointer;transition:color .2s;white-space:nowrap}
+.seg-btn.active{color:var(--text-main)}
+
+/* Search Box */
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:17px}
+.search-input{width:100%;padding:11px 14px 11px 38px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;color:var(--text-main);font-size:12.5px;font-weight:500;outline:none;transition:border-color .18s}
+.search-input:focus{border-color:var(--accent)}
+
+/* Sub-Pages & Inspector */
+.sub-page{position:absolute;inset:0;background:var(--app-bg);z-index:210;padding:16px 18px 0;display:none;flex-direction:column;opacity:0;transform:translateX(14px);transition:opacity .24s var(--spring),transform .28s var(--spring)}
+.sub-page.active{display:flex;opacity:1;transform:translateX(0)}
+.sub-page-body{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:28px;-webkit-overflow-scrolling:touch}
+.sub-page-body::-webkit-scrollbar{display:none}
+
+.action-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.act-btn{padding:11px 10px;border-radius:14px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main);font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .16s var(--spring),background-color .16s}
+.act-btn:active{transform:scale(.96);background:var(--card-elevated)}
+.act-btn.primary{background:var(--primary);color:var(--primary-ink);border-color:transparent}
+.act-btn.danger-outline{color:var(--danger);border-color:rgba(255,69,96,.28)}
+
+.kv-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--hairline);font-size:12px;gap:10px}
+.kv-row:last-child{border-bottom:none}
+.kv-k{color:var(--text-muted);font-weight:500;flex-shrink:0}
+.kv-v{color:var(--text-main);font-weight:600;text-align:right;word-break:break-all}
+
+/* Buttons & Inputs */
+.btn-main{width:100%;padding:13px 16px;background:var(--primary);border:none;border-radius:26px;font-weight:700;font-size:13.5px;color:var(--primary-ink);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;transition:transform .16s var(--spring),opacity .18s}
+.btn-main:active{transform:scale(.97);opacity:.9}
+.btn-secondary{background:var(--card-elevated)!important;color:var(--text-main)!important;border:1px solid var(--border-color)!important}
+.btn-danger{background:var(--danger)!important;color:#fff!important}
+
+.field-group{margin-bottom:12px;text-align:left}
+.field-lbl{display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:5px}
+.field-ctrl{width:100%;padding:11px 13px;background:var(--input-bg);border:1px solid var(--border-color);border-radius:12px;color:var(--text-main);font-size:13px;font-weight:600;outline:none;transition:border-color .18s}
+.field-ctrl:focus{border-color:var(--accent)}
+textarea.field-ctrl{resize:none;min-height:80px}
+
+.pin-field-wrap{position:relative}
+.pin-field-wrap .field-ctrl{padding-right:42px;letter-spacing:3px}
+.pin-eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer}
+.pin-seg-bar{height:3px;background:var(--card-elevated);border-radius:99px;margin-top:5px;overflow:hidden}
+.pin-seg-fill{height:100%;width:0%;background:var(--accent);transition:width .2s var(--spring),background-color .2s}
+
+/* Native Revolut / NEXO Support Chat UI */
+#sub-sup-chat{padding:0}
+.wa-chat-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card-bg);border-bottom:1px solid var(--border-color);flex-shrink:0}
+.wa-avatar{width:38px;height:38px;border-radius:50%;background:var(--card-elevated);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;position:relative;flex-shrink:0;border:1px solid var(--border-color)}
+.wa-online-dot{position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:var(--success);border:2px solid var(--card-bg)}
+.wa-canvas{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:8px;padding:14px;-webkit-overflow-scrolling:touch;background:var(--wa-bg)}
+.wa-canvas::-webkit-scrollbar{display:none}
+.wa-day-pill{align-self:center;font-size:10px;font-weight:700;color:var(--text-muted);background:var(--card-bg);border:1px solid var(--border-color);padding:4px 12px;border-radius:10px;margin:2px 0 6px}
+.wa-row{display:flex;flex-direction:column;max-width:82%}
+.wa-row.in{align-self:flex-start}
+.wa-row.out{align-self:flex-end}
+.wa-bubble{padding:9px 13px 7px;border-radius:16px;font-size:13px;line-height:1.42;white-space:pre-wrap;word-break:break-word}
+.wa-row.in .wa-bubble{background:var(--wa-in);color:var(--wa-in-ink);border:1px solid var(--border-color);border-top-left-radius:4px}
+.wa-row.out .wa-bubble{background:var(--wa-out);color:var(--wa-out-ink);border-top-right-radius:4px}
+.wa-meta{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:4px;font-size:9.5px;opacity:.76}
+.wa-meta i{font-size:14px;color:var(--wa-tick);line-height:1}
+.wa-chips-dock{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 12px 4px;background:var(--app-bg);border-top:1px solid var(--hairline);flex-shrink:0}
+.wa-chips-dock::-webkit-scrollbar{display:none}
+.wa-chip{white-space:nowrap;padding:6px 12px;border-radius:18px;background:var(--card-bg);border:1px solid var(--border-color);color:var(--text-main);font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0}
+.wa-chip:active{transform:scale(.95)}
+.wa-composer-wrap{display:flex;align-items:center;gap:8px;padding:8px 12px 14px;background:var(--app-bg);flex-shrink:0}
+.wa-input-pill{flex:1;display:flex;align-items:center;background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;padding:4px 14px;min-height:44px}
+.wa-input-pill input{flex:1;background:transparent;border:none;outline:none;color:var(--text-main);font-size:13px}
+.wa-send-btn{width:44px;height:44px;border-radius:50%;background:var(--wa-accent);color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-size:19px;cursor:pointer;flex-shrink:0;transition:transform .15s}
+.wa-send-btn:active{transform:scale(.9)}
+
+/* Sibling-Style Lock PIN Pad (6 Rounded Boxes + Spacious Dial Grid) */
+.pin-box-row{display:flex;justify-content:center;gap:9px;margin:18px 0 10px}
+.pin-box{width:38px;height:44px;border-radius:12px;border:1.5px solid var(--border-color);background:var(--card-bg);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:var(--primary);transition:all .18s var(--spring)}
+.pin-box.filled{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);transform:scale(1.04)}
+.pin-box.filled::after{content:'●';font-size:14px}
+.dial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;width:100%;max-width:274px;margin:0 auto}
+.dial-btn{height:58px;border-radius:18px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .14s var(--spring),background-color .14s}
+.dial-btn:active{transform:scale(.93);background:var(--card-elevated)}
+.dial-btn.special-btn{font-size:13px;font-weight:700;color:var(--text-muted);background:transparent;border-color:transparent}
+.dial-btn .dn{font-size:21px;font-weight:700;line-height:1.1}
+.dial-btn .ds{font-size:8px;font-weight:700;letter-spacing:1px;color:var(--text-muted);margin-top:1px}
+
+/* Modals & Toasts */
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:280;padding:16px}
+body.light-theme .modal-overlay{background:rgba(15,23,42,.28)}
+.modal-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:22px;padding:20px;width:100%;max-width:336px;max-height:88%;overflow-y:auto;scrollbar-width:none;box-shadow:var(--shadow);animation:popIn .22s var(--spring)}
+.modal-card::-webkit-scrollbar{display:none}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+
+.silent-toast{position:absolute;bottom:84px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--card-elevated);border:1px solid var(--border-color);color:var(--text-main);padding:9px 16px;border-radius:24px;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:6px;opacity:0;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.22);transition:opacity .2s,transform .22s var(--spring)}
+.silent-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.shake-effect{animation:shake .38s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{0%,100%{transform:translateX(0)}15%,45%,75%{transform:translateX(-6px)}30%,60%,90%{transform:translateX(6px)}}
+
+.rules-warn{display:none;align-items:center;justify-content:space-between;gap:8px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.32);color:var(--warn);border-radius:12px;padding:9px 12px;margin-bottom:10px;font-size:11px;font-weight:600}
+</style>
+<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+<body>
+<div class="app-container">
+    <div id="silent-toast" class="silent-toast"><i class='bx bx-check' style="color:var(--accent);font-size:16px;"></i><span id="silent-toast-text">Done</span></div>
+
+    <!-- Splash Loader -->
+    <div id="admin-splash" class="splash-screen">
+        <div class="splash-emblem-wrap">
+            <div class="splash-pulse-ring"></div>
+            <div class="splash-pulse-ring delay"></div>
+            <div class="splash-logo-box">
+                <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
+                    <path d="M24 4L41.32 14V34L24 44L6.68 34V14L24 4Z" stroke="url(#nexoadm-g)" stroke-width="2.8" stroke-linejoin="round"/>
+                    <path d="M24 13L33 17V24C33 29.6 29.1 33.8 24 35.6C18.9 33.8 15 29.6 15 24V17L24 13Z" fill="rgba(0,117,235,.22)" stroke="#0075eb" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="M20 27.5V20L24 24.4L28 20V27.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs><linearGradient id="nexoadm-g" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#94a3b8"/></linearGradient></defs>
+                </svg>
+            </div>
+        </div>
+        <h2 style="font-size:20px;font-weight:800;letter-spacing:1.4px;">NEXO ADMIN</h2>
+        <p style="color:var(--text-muted);font-size:9.5px;font-weight:800;letter-spacing:2px;margin-top:4px;">OPERATIONS CONSOLE</p>
+        <div class="splash-track"><div class="splash-fill"></div></div>
+        <p style="color:var(--text-muted);font-size:10px;font-weight:600;margin-top:10px;">Securing Command Center...</p>
+    </div>
+
+    <!-- Lock Gate Screen (Matches Sibling 6-Box PIN Pad) -->
+    <div id="admin-lock" class="screen" style="display:none;justify-content:space-between;padding:24px 4px 18px;text-align:center;">
+        <div style="margin-top:8px;">
+            <div style="width:68px;height:68px;border-radius:21px;background:linear-gradient(145deg,#1d2028,#0d0f13);border:1.5px solid rgba(0,117,235,.28);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 10px 26px rgba(0,0,0,.45);">
+                <svg viewBox="0 0 48 48" width="40" height="40" fill="none">
+                    <path d="M24 4L41.32 14V34L24 44L6.68 34V14L24 4Z" stroke="#e4e4e7" stroke-width="2.8" stroke-linejoin="round"/>
+                    <path d="M24 13L33 17V24C33 29.6 29.1 33.8 24 35.6C18.9 33.8 15 29.6 15 24V17L24 13Z" fill="rgba(0,117,235,.22)" stroke="#0075eb" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="M20 27.5V20L24 24.4L28 20V27.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h2 style="font-size:20px;font-weight:800;letter-spacing:-.3px;">NEXO Admin</h2>
+            <p id="lock-sub-txt" style="font-size:12px;color:var(--text-muted);font-weight:500;margin-top:4px;">Enter 6-digit console passcode</p>
+            <div class="pin-box-row" id="admin-lock-dots">
+                <div class="pin-box"></div><div class="pin-box"></div><div class="pin-box"></div><div class="pin-box"></div><div class="pin-box"></div><div class="pin-box"></div>
+            </div>
+            <p id="lock-err" style="min-height:18px;font-size:11.5px;font-weight:600;color:var(--danger);"></p>
+        </div>
+
+        <div class="dial-grid">
+            <button type="button" class="dial-btn" onclick="window.dialKey('1')"><span class="dn">1</span><span class="ds">&nbsp;</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('2')"><span class="dn">2</span><span class="ds">ABC</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('3')"><span class="dn">3</span><span class="ds">DEF</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('4')"><span class="dn">4</span><span class="ds">GHI</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('5')"><span class="dn">5</span><span class="ds">JKL</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('6')"><span class="dn">6</span><span class="ds">MNO</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('7')"><span class="dn">7</span><span class="ds">PQRS</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('8')"><span class="dn">8</span><span class="ds">TUV</span></button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('9')"><span class="dn">9</span><span class="ds">WXYZ</span></button>
+            <button type="button" class="dial-btn special-btn" onclick="window.dialReset()">Reset</button>
+            <button type="button" class="dial-btn" onclick="window.dialKey('0')"><span class="dn">0</span><span class="ds">+</span></button>
+            <button type="button" class="dial-btn special-btn" onclick="window.dialBack()" style="font-size:22px;"><i class='bx bx-x'></i></button>
+        </div>
+        <div style="height:6px;"></div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="admin-dash" class="screen" style="display:none;">
+        <div class="rules-warn" id="rules-warn-bar">
+            <span>Firestore rules blocked query</span>
+            <button type="button" onclick="window.openRulesModal()" style="background:var(--warn);color:#000;border:none;border-radius:8px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;">Fix Connection</button>
+        </div>
+
+        <div class="dashboard-body">
+            <!-- TAB 1: HOME / OVERVIEW (Profile & Settings ONLY on Home) -->
+            <div id="tab-overview" class="dashboard-tab">
+                <div class="home-header">
+                    <div class="home-prof-trigger" onclick="window.openAdminProfile()" title="Open Admin Profile">
+                        <div class="home-avatar-lg"><i class='bx bxs-user'></i></div>
+                        <div class="home-prof-meta">
+                            <h2 id="hdr-admin-name">NEXO Operations</h2>
+                            <p id="hdr-admin-role">Lead Administrator</p>
+                        </div>
+                    </div>
+                    <button type="button" class="icon-btn" onclick="window.openSettingsPage()" title="Console Settings"><i class='bx bx-cog'></i></button>
+                </div>
+
+                <div class="sync-banner" id="sync-loading-banner">
+                    <div class="sync-spinner"></div>
+                    <span>Syncing ecosystem data...</span>
+                </div>
+
+                <div class="rev-hero">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span class="rev-hero-label">Total Ecosystem Balance</span>
+                        <span class="rev-hero-label num-tab" id="ov-total-accounts">0 accounts</span>
+                    </div>
+                    <div class="rev-hero-amt num-tab" id="ov-total-float">৳ 0.00</div>
+                    <div class="rev-split">
+                        <div class="rev-split-cell" onclick="window.jumpAccounts('pay')"><span>NEXO Pay</span><strong class="num-tab" id="ov-pay-float">৳0</strong></div>
+                        <div class="rev-split-cell" onclick="window.jumpAccounts('agent')"><span>Business</span><strong class="num-tab" id="ov-biz-float">৳0</strong></div>
+                        <div class="rev-split-cell" onclick="window.jumpAccounts('card')"><span>Cards</span><strong class="num-tab" id="ov-card-float">৳0</strong></div>
+                    </div>
+                </div>
+
+                <div class="rev-actions-row">
+                    <button type="button" class="rev-act-btn primary" onclick="window.openOfferEditor()"><div class="rev-act-circle"><i class='bx bx-plus'></i></div><span>New Offer</span></button>
+                    <button type="button" class="rev-act-btn" onclick="window.openBroadcastModal()"><div class="rev-act-circle"><i class='bx bx-broadcast'></i></div><span>Broadcast</span></button>
+                    <button type="button" class="rev-act-btn" onclick="window.openGiftCardPage()"><div class="rev-act-circle"><i class='bx bx-gift'></i></div><span>Gift Card</span></button>
+                    <button type="button" class="rev-act-btn" onclick="window.openAnalyticsPage()"><div class="rev-act-circle"><i class='bx bx-bar-chart-alt-2'></i></div><span>Analytics</span></button>
+                </div>
+
+                <div class="metric-strip">
+                    <div class="metric-cell" onclick="window.jumpAccounts('all')"><strong class="num-tab" id="kpi-acc-cnt">0</strong><span>Total Accounts</span></div>
+                    <div class="metric-cell" onclick="window.switchTab('support',3)"><strong class="num-tab" id="kpi-ticket-cnt">0</strong><span>Open Chats</span></div>
+                    <div class="metric-cell" onclick="window.switchTab('offers',2)"><strong class="num-tab" id="kpi-offer-cnt">0</strong><span>Active Offers</span></div>
+                </div>
+
+                <div class="sec-head">
+                    <h4>Recent Transactions</h4>
+                    <span class="muted num-tab" id="ov-tx-count">0 items</span>
+                </div>
+                <div class="seg-bar c4" id="tx-app-seg">
+                    <div class="seg-thumb" id="tx-app-thumb"></div>
+                    <button type="button" class="seg-btn active" onclick="window.setTxFilter('all',0)">All</button>
+                    <button type="button" class="seg-btn" onclick="window.setTxFilter('pay',1)">Pay</button>
+                    <button type="button" class="seg-btn" onclick="window.setTxFilter('biz',2)">Business</button>
+                    <button type="button" class="seg-btn" onclick="window.setTxFilter('card',3)">Card</button>
+                </div>
+                <div class="rev-group" id="ov-tx-list"></div>
+            </div>
+
+            <!-- TAB 2: ACCOUNTS DIRECTORY -->
+            <div id="tab-accounts" class="dashboard-tab" style="display:none;">
+                <div class="tab-header">
+                    <h2>Accounts</h2>
+                    <span class="muted num-tab" style="font-size:12px;font-weight:600;color:var(--text-muted);" id="acc-list-count">0 found</span>
+                </div>
+                <div class="seg-bar c5" id="acc-seg-bar">
+                    <div class="seg-thumb" id="acc-seg-thumb"></div>
+                    <button type="button" class="seg-btn active" onclick="window.setAccFilter('all',0)">All</button>
+                    <button type="button" class="seg-btn" onclick="window.setAccFilter('pay',1)">Pay</button>
+                    <button type="button" class="seg-btn" onclick="window.setAccFilter('agent',2)">Agent</button>
+                    <button type="button" class="seg-btn" onclick="window.setAccFilter('merchant',3)">Merch</button>
+                    <button type="button" class="seg-btn" onclick="window.setAccFilter('card',4)">Card</button>
+                </div>
+                <div class="search-wrap">
+                    <i class='bx bx-search'></i>
+                    <input type="text" id="acc-search" class="search-input" placeholder="Search name, phone, email or card" oninput="window.renderAccountsList()" />
+                </div>
+                <div class="sec-head"><h4 id="acc-list-title">All Accounts</h4></div>
+                <div class="rev-group" id="acc-list-container"></div>
+            </div>
+
+            <!-- TAB 3: OFFERS & GIFT CARDS -->
+            <div id="tab-offers" class="dashboard-tab" style="display:none;">
+                <div class="tab-header">
+                    <h2>Offers & Cards</h2>
+                    <button type="button" class="tab-action-link" onclick="window.openOfferEditor()">+ Create Offer</button>
+                </div>
+                <div class="rev-group" id="offers-admin-list"></div>
+
+                <div class="sec-head"><h4>Issued Gift Cards</h4><button type="button" onclick="window.openGiftCardPage()">+ Issue Card</button></div>
+                <div class="rev-group" id="giftcards-admin-list"></div>
+            </div>
+
+            <!-- TAB 4: LIVE SUPPORT CHAT DIRECTORY -->
+            <div id="tab-support" class="dashboard-tab" style="display:none;">
+                <div class="tab-header">
+                    <h2>Support Chats</h2>
+                    <span class="muted num-tab" style="font-size:12px;font-weight:600;color:var(--text-muted);" id="sup-thread-cnt">0 chats</span>
+                </div>
+                <div class="seg-bar c3" id="sup-seg-bar">
+                    <div class="seg-thumb" id="sup-seg-thumb"></div>
+                    <button type="button" class="seg-btn active" onclick="window.setSupFilter('all',0)">All Chats</button>
+                    <button type="button" class="seg-btn" onclick="window.setSupFilter('open',1)">Open</button>
+                    <button type="button" class="seg-btn" onclick="window.setSupFilter('resolved',2)">Resolved</button>
+                </div>
+                <div class="search-wrap">
+                    <i class='bx bx-search'></i>
+                    <input type="text" id="sup-search" class="search-input" placeholder="Search customer name, phone or message" oninput="window.renderSupportList()" />
+                </div>
+                <div class="rev-group" id="support-admin-list"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation (Clean 4 Tabs) -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="window.switchTab('overview',0)"><i class='bx bxs-home-circle'></i><span>Home</span></div>
+            <div class="nav-item" onclick="window.switchTab('accounts',1)"><i class='bx bx-group'></i><span>Accounts</span></div>
+            <div class="nav-item" onclick="window.switchTab('offers',2)"><i class='bx bx-purchase-tag-alt'></i><span>Offers</span></div>
+            <div class="nav-item" onclick="window.switchTab('support',3)"><i class='bx bx-message-square-dots'></i><span>Support</span><span class="nav-badge" id="nav-sup-badge">0</span></div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: CONSOLE SETTINGS (Opened from Top-Right Gear on Home) -->
+    <div class="sub-page" id="sub-settings">
+        <div class="top-nav">
+            <button type="button" class="back-btn" onclick="window.closeSubPage('sub-settings')"><i class='bx bx-chevron-left'></i></button>
+            <h3 style="font-size:15.5px;font-weight:700;">Console Settings</h3>
+            <div style="width:38px;"></div>
+        </div>
+        <div class="sub-page-body">
+            <div class="rev-hero interactive" onclick="window.openAdminProfile()" style="display:flex;align-items:center;gap:14px;padding:16px;">
+                <div class="home-avatar-lg" style="width:52px;height:52px;font-size:28px;"><i class='bx bxs-user'></i></div>
+                <div style="min-width:0;flex:1;">
+                    <h3 id="set-prof-name" style="font-size:15.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">NEXO Operations</h3>
+                    <p id="set-prof-sub" style="font-size:11.5px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Lead Administrator · admin@nexo.app</p>
+                </div>
+                <i class='bx bx-chevron-right' style="color:var(--text-muted);font-size:20px;flex-shrink:0;"></i>
+            </div>
+
+            <div class="sec-head"><h4>Appearance</h4></div>
+            <div class="rev-group" style="padding:12px 14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span style="font-size:13px;font-weight:600;">Theme Edition</span>
+                    <span style="font-size:11px;color:var(--text-muted);" id="set-theme-lbl">Revolut Dark</span>
+                </div>
+                <div class="seg-bar c2" id="adm-theme-seg" style="margin-bottom:0;">
+                    <div class="seg-thumb" id="adm-theme-thumb"></div>
+                    <button type="button" class="seg-btn" onclick="window.setTheme('dark',0)">Revolut Dark</button>
+                    <button type="button" class="seg-btn" onclick="window.setTheme('light',1)">Clean Light</button>
+                </div>
+            </div>
+
+            <div class="sec-head"><h4>Account & Security</h4></div>
+            <div class="rev-group">
+                <div class="rev-row" onclick="window.openAdminProfile()">
+                    <div class="rev-row-left"><div class="rev-ico"><i class='bx bx-user-circle'></i></div><div class="rev-meta"><h5>Admin Profile</h5><p>Name, role, email & operations identity</p></div></div>
+                    <i class='bx bx-chevron-right' style="color:var(--text-muted);font-size:18px;"></i>
+                </div>
+                <div class="rev-row" onclick="window.openChangePinPage()">
+                    <div class="rev-row-left"><div class="rev-ico"><i class='bx bx-key'></i></div><div class="rev-meta"><h5>Change Console Passcode</h5><p>Update 6-digit security passcode</p></div></div>
+                    <i class='bx bx-chevron-right' style="color:var(--text-muted);font-size:18px;"></i>
+                </div>
+            </div>
+
+            <div class="sec-head"><h4>Notifications &amp; App Install</h4></div>
+            <div class="rev-group">
+                <div class="rev-row" onclick="window.nexoEnablePushNotifications()">
+                    <div class="rev-row-left"><div class="rev-ico" style="color:var(--accent);"><i class='bx bxs-bell-ring'></i></div><div class="rev-meta"><h5>Lock-Screen Push Alerts</h5><p id="nexo-push-sub">Notify even when console is closed</p></div></div>
+                    <span id="nexo-push-badge" style="font-size:10.5px;font-weight:800;color:var(--accent);">ENABLE</span>
+                </div>
+                <div class="rev-row" onclick="window.nexoInstallPWA()">
+                    <div class="rev-row-left"><div class="rev-ico" style="color:var(--success);"><i class='bx bx-mobile-alt'></i></div><div class="rev-meta"><h5>Install NEXO Admin App</h5><p id="nexo-pwa-sub">Add to phone home screen</p></div></div>
+                    <i class='bx bx-download' style="color:var(--success);font-size:18px;"></i>
+                </div>
+            </div>
+
+            <div class="sec-head"><h4>Data &amp; Infrastructure</h4></div>
+            <div class="rev-group">
+                <div class="rev-row" onclick="window.openRulesModal()">
+                    <div class="rev-row-left"><div class="rev-ico"><i class='bx bx-shield-alt-2'></i></div><div class="rev-meta"><h5>Cloud Connection &amp; Rules</h5><p>Firebase Auth status &amp; security rules</p></div></div>
+                    <i class='bx bx-chevron-right' style="color:var(--text-muted);font-size:18px;"></i>
+                </div>
+                <div class="rev-row" onclick="window.exportEcosystemJson()">
+                    <div class="rev-row-left"><div class="rev-ico"><i class='bx bx-download'></i></div><div class="rev-meta"><h5>Export Ecosystem Backup</h5><p>Download JSON snapshot of all collections</p></div></div>
+                    <i class='bx bx-chevron-right' style="color:var(--text-muted);font-size:18px;"></i>
+                </div>
+            </div>
+
+            <div class="sec-head"><h4>Maintenance</h4></div>
+            <div class="rev-group">
+                <div class="rev-row" onclick="window.purgeResolvedTickets()">
+                    <div class="rev-row-left"><div class="rev-ico"><i class='bx bx-check-double'></i></div><div class="rev-meta"><h5>Clear Resolved Chats</h5><p>Remove closed support conversations</p></div></div>
+                    <i class='bx bx-chevron-right' style="color:var(--text-muted);font-size:18px;"></i>
+                </div>
+                <div class="rev-row" onclick="window.clearGlobalBroadcasts()">
+                    <div class="rev-row-left"><div class="rev-ico" style="color:var(--danger);"><i class='bx bx-trash'></i></div><div class="rev-meta"><h5 style="color:var(--danger);">Clear Global Broadcasts</h5><p>Delete old ALL-user notifications</p></div></div>
+                    <i class='bx bx-chevron-right' style="color:var(--danger);font-size:18px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: ADMIN PROFILE -->
+    <div class="sub-page" id="sub-admin-profile">
+        <div class="top-nav">
+            <button type="button" class="back-btn" onclick="window.closeSubPage('sub-admin-profile')"><i class='bx bx-chevron-left'></i></button>
+            <h3 style="font-size:15.5px;font-weight:700;">Admin Profile</h3>
+            <button type="button" class="icon-btn" onclick="window.openEditAdminProfileModal()" title="Edit Profile"><i class='bx bx-edit-alt'></i></button>
+        </div>
+        <div class="sub-page-body">
+            <div class="rev-hero" style="text-align:center;padding:22px 18px 18px;">
+                <div class="profile-avatar-xl" id="prof-xl-avatar">
+                    <i class='bx bxs-user' style="font-size:42px;"></i>
+                    <span class="profile-verify-dot"><i class='bx bx-check'></i></span>
+                </div>
+                <h2 id="prof-name" style="font-size:19px;font-weight:800;letter-spacing:-.3px;">NEXO Operations</h2>
+                <p id="prof-role-desk" style="font-size:12px;color:var(--text-muted);font-weight:600;margin-top:3px;">Lead Administrator · Dhaka HQ</p>
+                <p id="prof-bio" style="font-size:11.5px;color:var(--text-muted);line-height:1.45;margin-top:8px;">Authorized master controller for NEXO Pay, Business & Card.</p>
+                <div class="action-grid-2" style="margin:16px 0 0;">
+                    <button type="button" class="act-btn primary" onclick="window.openEditAdminProfileModal()"><i class='bx bx-edit-alt'></i> Edit Profile</button>
+                    <button type="button" class="act-btn" onclick="window.openChangePinPage()"><i class='bx bx-key'></i> Passcode</button>
+                </div>
+            </div>
+
+            <div class="sec-head"><h4>Identity & Contact</h4></div>
+            <div class="rev-group">
+                <div class="kv-row"><span class="kv-k">Full Name</span><span class="kv-v" id="prof-kv-name">NEXO Operations</span></div>
+                <div class="kv-row"><span class="kv-k">Role / Title</span><span class="kv-v" id="prof-kv-role">Lead Administrator</span></div>
+                <div class="kv-row"><span class="kv-k">Email</span><span class="kv-v" id="prof-kv-email">admin@nexo.app</span></div>
+                <div class="kv-row"><span class="kv-k">Hotline / Phone</span><span class="kv-v mono" id="prof-kv-phone">1671</span></div>
+                <div class="kv-row"><span class="kv-k">Office / Desk</span><span class="kv-v" id="prof-kv-desk">Dhaka HQ</span></div>
+                <div class="kv-row" onclick="navigator.clipboard?.writeText(adminProfile.adminId||'NX-ADM-01');showToast('Admin ID copied')" style="cursor:pointer;"><span class="kv-k">Admin ID (Tap to copy)</span><span class="kv-v mono" id="prof-kv-id" style="color:var(--accent);">NX-ADM-01</span></div>
+            </div>
+
+            <div class="sec-head"><h4>Operations Footprint</h4></div>
+            <div class="rev-group">
+                <div class="kv-row"><span class="kv-k">Managed Accounts</span><span class="kv-v num-tab" id="prof-stat-acc">0</span></div>
+                <div class="kv-row"><span class="kv-k">Synced Transactions</span><span class="kv-v num-tab" id="prof-stat-tx">0</span></div>
+                <div class="kv-row"><span class="kv-k">Active Promotions</span><span class="kv-v num-tab" id="prof-stat-offers">0</span></div>
+                <div class="kv-row"><span class="kv-k">Open Support Threads</span><span class="kv-v num-tab" id="prof-stat-chats">0</span></div>
+                <div class="kv-row"><span class="kv-k">Cloud Project</span><span class="kv-v mono">nexo-pay-a5e86</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: CREATE / EDIT OFFER (Dedicated Full Page) -->
+    <div class="sub-page" id="sub-offer-editor">
+        <div class="top-nav">
+            <button type="button" class="back-btn" onclick="window.closeSubPage('sub-offer-editor')"><i class='bx bx-chevron-left'></i></button>
+            <h3 style="font-size:15.5px;font-weight:700;" id="ofm-heading">Create Offer</h3>
+            <div style="width:38px;"></div>
+        </div>
+        <div class="sub-page-body">
+            <div class="rev-hero" style="padding:16px;margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <span style="font-size:10.5px;font-weight:700;color:var(--accent);text-transform:uppercase;" id="ofm-prev-app">ALL APPS</span>
+                    <span style="font-size:11px;font-weight:700;color:var(--success);" id="ofm-prev-badge">+2% Cashback</span>
+                </div>
+                <h4 style="font-size:15px;font-weight:800;margin-bottom:3px;" id="ofm-prev-title">Offer Title Preview</h4>
+                <p style="font-size:11.5px;color:var(--text-muted);line-height:1.4;" id="ofm-prev-desc">Live promotion card preview across selected NEXO apps.</p>
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--hairline);display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);">
+                    <span>Promo Code: <strong class="mono" style="color:var(--text-main);" id="ofm-prev-code">NEXO25</strong></span>
+                    <span>Min Spend: <strong class="num-tab" style="color:var(--text-main);" id="ofm-prev-min">৳500</strong></span>
+                </div>
+            </div>
+
+            <div class="rev-group" style="padding:16px;">
+                <div class="field-group"><label class="field-lbl">Offer Title</label><input type="text" id="ofm-title" class="field-ctrl" placeholder="Weekend 2% Cashback" oninput="window.updateOfferPreview()" /></div>
+                <div class="field-group"><label class="field-lbl">Description</label><textarea id="ofm-desc" class="field-ctrl" style="min-height:68px;" placeholder="Instant cashback on min ৳500 spend" oninput="window.updateOfferPreview()"></textarea></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div class="field-group"><label class="field-lbl">Target App</label>
+                        <select id="ofm-app" class="field-ctrl" onchange="window.updateOfferPreview()">
+                            <option value="all">All Apps</option>
+                            <option value="pay">NEXO Pay</option>
+                            <option value="business">NEXO Business</option>
+                            <option value="card">NEXO Card</option>
+                        </select>
+                    </div>
+                    <div class="field-group"><label class="field-lbl">Reward Label</label><input type="text" id="ofm-badge" class="field-ctrl" placeholder="+2% Cashback" oninput="window.updateOfferPreview()" /></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:8px;">
+                    <div class="field-group">
+                        <label class="field-lbl">Promo Code</label>
+                        <div style="display:flex;gap:6px;">
+                            <input type="text" id="ofm-code" class="field-ctrl mono" placeholder="NEXO25" oninput="window.updateOfferPreview()" />
+                            <button type="button" class="act-btn" style="padding:0 10px;border-radius:12px;" onclick="window.genOfferCode()">GEN</button>
+                        </div>
+                    </div>
+                    <div class="field-group"><label class="field-lbl">Min Spend (৳)</label><input type="number" id="ofm-min" class="field-ctrl num-tab" value="500" oninput="window.updateOfferPreview()" /></div>
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;margin:4px 0 0;cursor:pointer;">
+                    <input type="checkbox" id="ofm-broadcast" checked style="width:16px;height:16px;accent-color:var(--accent);" />
+                    <span>Send push notification to users</span>
+                </label>
+            </div>
+            <button type="button" class="btn-main" id="ofm-save-btn" onclick="window.saveOffer()">Publish Offer</button>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: ISSUE GIFT CARD -->
+    <div class="sub-page" id="sub-giftcard-editor">
+        <div class="top-nav">
+            <button type="button" class="back-btn" onclick="window.closeSubPage('sub-giftcard-editor')"><i class='bx bx-chevron-left'></i></button>
+            <h3 style="font-size:15.5px;font-weight:700;">Issue Gift Card</h3>
+            <div style="width:38px;"></div>
+        </div>
+        <div class="sub-page-body">
+            <div class="rev-hero" style="text-align:center;padding:20px;">
+                <span style="font-size:10.5px;font-weight:700;color:var(--accent);letter-spacing:1px;">REDEEMABLE GIFT VOUCHER</span>
+                <div class="num-tab" style="font-size:32px;font-weight:800;margin:8px 0;" id="gc-prev-amt">৳500</div>
+                <div class="mono" style="font-size:14px;font-weight:700;color:var(--text-muted);" id="gc-prev-code">NEXO-GIFT-2026</div>
+            </div>
+            <div class="rev-group" style="padding:16px;">
+                <div class="field-group"><label class="field-lbl">Gift Card Value (৳)</label><input type="number" id="gc-amt-inp" class="field-ctrl num-tab" value="500" oninput="$('gc-prev-amt').innerText='৳'+fmtNum(this.value||0)" /></div>
+                <div class="field-group">
+                    <label class="field-lbl">Voucher Code</label>
+                    <div style="display:flex;gap:6px;">
+                        <input type="text" id="gc-code-inp" class="field-ctrl mono" oninput="$('gc-prev-code').innerText=this.value.toUpperCase()||'NEXO-GIFT'" />
+                        <button type="button" class="act-btn" style="padding:0 12px;border-radius:12px;" onclick="window.genGiftCode()">NEW</button>
+                    </div>
+                </div>
+                <div class="field-group"><label class="field-lbl">Note / Campaign</label><input type="text" id="gc-note-inp" class="field-ctrl" placeholder="Special Reward Voucher" /></div>
+            </div>
+            <button type="button" class="btn-main" onclick="window.createAdminGiftCard()">Create & Publish Gift Card</button>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: ECOSYSTEM ANALYTICS -->
+    <div class="sub-page" id="sub-analytics">
+        <div class="top-nav">
+            <button type="button" class="back-btn" onclick="window.closeSubPage('sub-analytics')"><i class='bx bx-chevron-left'></i></button>
+            <h3 style="font-size:15.5px;font-weight:700;">Ecosystem Analytics</h3>
+            <div style="width:38px;"></div>
+        </div>
+        <div class="sub-page-body" id="analytics-body"></div>
+    </div>
+
+    <!-- SUB-PAGE: CHANGE CONSOLE PASSCODE (Clean Dedicated Security Page) -->
+    <div class="sub-page" id="sub-change-pin">
+        <div class="top-nav">
+            <button type="button" class="back-btn" onclick="window.closeSubPage('sub-change-pin')"><i class='bx bx-chevron-left'></i></button>
+            <h3 style="font-size:15.5px;font-weight:700;">Change Passcode</h3>
+            <div style="width:38px;"></div>
+        </div>
+        <div class="sub-page-body">
+            <div class="rev-hero" style="text-align:center;padding:18px;">
+                <div class="rev-ico" style="width:48px;height:48px;margin:0 auto 10px;font-size:22px;color:var(--accent);"><i class='bx bx-shield-quarter'></i></div>
+                <h4 style="font-size:15px;font-weight:700;">Console Security PIN</h4>
+                <p style="font-size:11.5px;color:var(--text-muted);margin-top:3px;">Enter current 6-digit passcode and set a new one</p>
+            </div>
+            <div class="rev-group" style="padding:16px;">
+                <div class="field-group">
+                    <label class="field-lbl">Current 6-Digit Passcode</label>
+                    <div class="pin-field-wrap">
+                        <input type="password" id="cp-cur-pin" maxlength="6" inputmode="numeric" class="field-ctrl mono" placeholder="••••••" oninput="this.value=this.value.replace(/\D/g,'');window.updPinBar(this,'cp-cur-bar')" />
+                        <button type="button" class="pin-eye-btn" onclick="window.togglePassVis('cp-cur-pin',this)"><i class='bx bx-hide'></i></button>
+                    </div>
+                    <div class="pin-seg-bar"><div class="pin-seg-fill" id="cp-cur-bar"></div></div>
+                </div>
+                <div class="field-group">
+                    <label class="field-lbl">New 6-Digit Passcode</label>
+                    <div class="pin-field-wrap">
+                        <input type="password" id="adm-new-pin" maxlength="6" inputmode="numeric" class="field-ctrl mono" placeholder="••••••" oninput="this.value=this.value.replace(/\D/g,'');window.updPinBar(this,'cp-new-bar')" />
+                        <button type="button" class="pin-eye-btn" onclick="window.togglePassVis('adm-new-pin',this)"><i class='bx bx-hide'></i></button>
+                    </div>
+                    <div class="pin-seg-bar"><div class="pin-seg-fill" id="cp-new-bar"></div></div>
+                </div>
+                <div class="field-group" style="margin-bottom:0;">
+                    <label class="field-lbl">Confirm New Passcode</label>
+                    <div class="pin-field-wrap">
+                        <input type="password" id="adm-cnf-pin" maxlength="6" inputmode="numeric" class="field-ctrl mono" placeholder="••••••" oninput="this.value=this.value.replace(/\D/g,'');window.updPinBar(this,'cp-cnf-bar')" />
+                        <button type="button" class="pin-eye-btn" onclick="window.togglePassVis('adm-cnf-pin',this)"><i class='bx bx-hide'></i></button>
+                    </div>
+                    <div class="pin-seg-bar"><div class="pin-seg-fill" id="cp-cnf-bar"></div></div>
+                </div>
+            </div>
+            <button type="button" class="btn-main" onclick="window.saveAdminPin()">Update Console Passcode</button>
+        </div>
+    </div>
+
+    <!-- SUB-PAGE: ACCOUNT 360 INSPECTOR -->
+    <div class="sub-page" id="sub-acc-detail">
+        <div class="top-nav">
+            <button type="button" class="back-btn" onclick="window.closeSubPage('sub-acc-detail')"><i class='bx bx-chevron-left'></i></button>
+            <h3 style="font-size:15.5px;font-weight:700;">Account Details</h3>
+            <div style="width:38px;"></div>
+        </div>
+        <div class="sub-page-body" id="acc-detail-body"></div>
+    </div>
+
+    <!-- SUB-PAGE: WHATSAPP / IMO STYLE LIVE SUPPORT CHAT -->
+    <div class="sub-page" id="sub-sup-chat">
+        <div class="wa-chat-header">
+            <button type="button" class="back-btn" style="width:34px;height:34px;" onclick="window.closeSupportChat()"><i class='bx bx-chevron-left'></i></button>
+            <div class="wa-avatar">
+                <i class='bx bxs-user' style="font-size:19px;"></i>
+                <span class="wa-online-dot"></span>
+            </div>
+            <div style="flex:1;min-width:0;">
+                <h4 style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="chat-hdr-name">Customer</h4>
+                <p style="font-size:10.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="chat-hdr-sub">NEXO Pay</p>
+            </div>
+            <button type="button" class="icon-btn" style="width:34px;height:34px;font-size:16px;" onclick="window.inspectActiveChatOwner()" title="Inspect Account"><i class='bx bx-user'></i></button>
+            <button type="button" class="icon-btn" style="width:34px;height:34px;font-size:16px;" id="chat-status-btn" onclick="window.toggleChatResolved()" title="Mark Resolved / Open"><i class='bx bx-check-circle'></i></button>
+            <button type="button" class="icon-btn" style="width:34px;height:34px;font-size:16px;color:var(--danger);" onclick="window.deleteActiveChatThread()" title="Delete Thread"><i class='bx bx-trash'></i></button>
+        </div>
+        <div class="wa-canvas" id="admin-chat-msgs"></div>
+        <div class="wa-chips-dock">
+            <button type="button" class="wa-chip" onclick="window.sendQuickChatReply('আপনার সমস্যাটি সমাধান করা হয়েছে। অনুগ্রহ করে অ্যাপটি রিফ্রেশ করে দেখুন।')">Solved</button>
+            <button type="button" class="wa-chip" onclick="window.sendQuickChatReply('আপনার বোনাস / রিফান্ড একাউন্টে যোগ করা হয়েছে।')">Refund Credited</button>
+            <button type="button" class="wa-chip" onclick="window.sendQuickChatReply('যাচাই শেষে আপনার একাউন্ট সচল করা হয়েছে।')">Unblocked</button>
+            <button type="button" class="wa-chip" onclick="window.sendQuickChatReply('দয়া করে আপনার লেনদেনের TXN ID শেয়ার করুন, আমি এখনই চেক করছি।')">Ask TXN ID</button>
+        </div>
+        <div class="wa-composer-wrap">
+            <div class="wa-input-pill">
+                <input type="text" id="admin-chat-input" placeholder="Message customer..." onkeydown="if(event.key==='Enter')window.sendChatReply()" />
+            </div>
+            <button type="button" class="wa-send-btn" onclick="window.sendChatReply()"><i class='bx bxs-send'></i></button>
+        </div>
+    </div>
+
+    <!-- MODAL: BALANCE ADJUSTMENT -->
+    <div class="modal-overlay" id="bal-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-card">
+            <h3 style="font-size:15.5px;font-weight:700;margin-bottom:4px;" id="bal-modal-title">Adjust Balance</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:14px;" id="bal-modal-sub">Target account</p>
+            <div class="field-group"><label class="field-lbl">Amount (৳)</label><input type="number" id="bal-adj-amt" class="field-ctrl num-tab" placeholder="e.g. 500" /></div>
+            <div class="field-group"><label class="field-lbl">Ledger Description</label><input type="text" id="bal-adj-note" class="field-ctrl" placeholder="e.g. Balance adjustment" /></div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+                <button type="button" class="btn-main btn-secondary" style="flex:1;" onclick="document.getElementById('bal-modal').style.display='none'">Cancel</button>
+                <button type="button" class="btn-main" id="bal-adj-confirm" style="flex:1;" onclick="window.executeBalAdjust()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT CREDENTIALS / FIELDS -->
+    <div class="modal-overlay" id="edit-fields-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-card">
+            <h3 style="font-size:15.5px;font-weight:700;margin-bottom:4px;">Edit Account</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:14px;" id="ef-sub">Stored cloud profile</p>
+            <div class="field-group"><label class="field-lbl">Account / Business Name</label><input type="text" id="ef-name" class="field-ctrl" /></div>
+            <div class="field-group"><label class="field-lbl">6-Digit PIN</label><input type="text" id="ef-pin" maxlength="6" class="field-ctrl mono" /></div>
+            <div class="field-group" id="ef-pts-wrap"><label class="field-lbl">Reward Points</label><input type="number" id="ef-pts" class="field-ctrl num-tab" /></div>
+            <div class="field-group" id="ef-lim-wrap" style="display:none;"><label class="field-lbl">Card Single Txn Limit (৳)</label><input type="number" id="ef-lim" class="field-ctrl num-tab" /></div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+                <button type="button" class="btn-main btn-secondary" style="flex:1;" onclick="document.getElementById('edit-fields-modal').style.display='none'">Cancel</button>
+                <button type="button" class="btn-main" style="flex:1;" onclick="window.saveEditedFields()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOTIFICATION / BROADCAST -->
+    <div class="modal-overlay" id="notif-send-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-card">
+            <h3 style="font-size:15.5px;font-weight:700;margin-bottom:4px;" id="ns-modal-title">Send Notification</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:14px;" id="ns-modal-sub">Instant delivery</p>
+            <div class="field-group"><label class="field-lbl">Recipient Phone or ALL</label><input type="text" id="ns-phone" class="field-ctrl" placeholder="ALL or 01XXXXXXXXX" /></div>
+            <div class="field-group"><label class="field-lbl">Title</label><input type="text" id="ns-title" class="field-ctrl" placeholder="Announcement title" /></div>
+            <div class="field-group"><label class="field-lbl">Message</label><textarea id="ns-msg" class="field-ctrl" placeholder="Write notification message..."></textarea></div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+                <button type="button" class="btn-main btn-secondary" style="flex:1;" onclick="document.getElementById('notif-send-modal').style.display='none'">Cancel</button>
+                <button type="button" class="btn-main" style="flex:1;" onclick="window.executeSendNotif()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DELETE ACCOUNT CONFIRM -->
+    <div class="modal-overlay" id="del-acc-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-card" style="text-align:center;">
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:6px;">Delete Account Permanently</h3>
+            <p style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:16px;" id="del-acc-warn">This removes the account record permanently and signs out the user immediately.</p>
+            <div style="display:flex;gap:8px;">
+                <button type="button" class="btn-main btn-secondary" style="flex:1;" onclick="document.getElementById('del-acc-modal').style.display='none'">Cancel</button>
+                <button type="button" class="btn-main btn-danger" style="flex:1;" onclick="window.confirmDeleteAccount()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TRANSACTION INSPECTOR -->
+    <div class="modal-overlay" id="tx-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-card">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:2px;" id="txm-title">Transaction</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px;" id="txm-app">NEXO Pay</p>
+            <h2 class="num-tab" style="font-size:25px;font-weight:800;margin-bottom:12px;" id="txm-amt">৳0.00</h2>
+            <div class="rev-group" id="txm-rows" style="margin-bottom:14px;"></div>
+            <button type="button" class="btn-main" onclick="document.getElementById('tx-modal').style.display='none'">Done</button>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT ADMIN PROFILE -->
+    <div class="modal-overlay" id="edit-admin-profile-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-card">
+            <h3 style="font-size:15.5px;font-weight:700;margin-bottom:4px;">Edit Admin Profile</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:14px;">Synced across console sessions</p>
+            <div class="field-group"><label class="field-lbl">Full Name</label><input type="text" id="eap-name" class="field-ctrl" placeholder="NEXO Operations" /></div>
+            <div class="field-group"><label class="field-lbl">Role / Title</label><input type="text" id="eap-role" class="field-ctrl" placeholder="Lead Administrator" /></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="field-group"><label class="field-lbl">Email</label><input type="email" id="eap-email" class="field-ctrl" placeholder="admin@nexo.app" /></div>
+                <div class="field-group"><label class="field-lbl">Hotline / Phone</label><input type="text" id="eap-phone" class="field-ctrl mono" placeholder="1671" /></div>
+            </div>
+            <div class="field-group"><label class="field-lbl">Office / Desk</label><input type="text" id="eap-desk" class="field-ctrl" placeholder="Dhaka HQ" /></div>
+            <div class="field-group"><label class="field-lbl">Bio / Operations Note</label><textarea id="eap-bio" class="field-ctrl" style="min-height:66px;" placeholder="Authorized master controller..."></textarea></div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+                <button type="button" class="btn-main btn-secondary" style="flex:1;" onclick="document.getElementById('edit-admin-profile-modal').style.display='none'">Cancel</button>
+                <button type="button" class="btn-main" style="flex:1;" onclick="window.saveAdminProfile()">Save Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CLOUD CONNECTION & FIRESTORE RULES -->
+    <div class="modal-overlay" id="rules-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-card">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:4px;">Cloud Connection & Rules</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);line-height:1.45;margin-bottom:12px;" id="auth-conn-status">Sign in with any NEXO account to satisfy Firebase Auth rules, or update Firestore rules.</p>
+            <div class="field-group"><label class="field-lbl">NEXO Account Email</label><input type="email" id="cloud-auth-email" class="field-ctrl" placeholder="your@email.com" /></div>
+            <div class="field-group"><label class="field-lbl">6-Digit PIN</label><input type="password" id="cloud-auth-pin" maxlength="6" inputmode="numeric" class="field-ctrl mono" placeholder="••••••" /></div>
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+                <button type="button" class="btn-main" style="flex:1;" onclick="window.signInCloudAdmin()">Connect Account</button>
+                <button type="button" class="btn-main btn-secondary" style="flex:1;" onclick="window.retryCloudSync(true)">Retry Sync</button>
+            </div>
+            <p style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;">OR SET FIRESTORE RULES TO:</p>
+            <textarea readonly class="field-ctrl mono" style="font-size:10.5px;min-height:110px;">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}</textarea>
+            <div style="display:flex;gap:8px;margin-top:12px;">
+                <button type="button" class="btn-main btn-secondary" style="flex:1;" onclick="document.getElementById('rules-modal').style.display='none'">Close</button>
+                <button type="button" class="btn-main" style="flex:1;" onclick="window.copyRules()">Copy Rules</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const firebaseConfig={apiKey:"AIzaSyCMlEqyv5J0dsyWAs3iQEbb8N2BO9u9Krs",authDomain:"nexo-pay-a5e86.firebaseapp.com",databaseURL:"https://nexo-pay-a5e86-default-rtdb.firebaseio.com",projectId:"nexo-pay-a5e86",storageBucket:"nexo-pay-a5e86.firebasestorage.app",messagingSenderId:"870398931159",appId:"1:870398931159:web:5836ba4539d4f650e14092",measurementId:"G-7RQMDSDYPN"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+(function initNexoPushEngine(APP_KEY){
+    const VAPID='BNlKkN_JN5YnqlBNubKYUJY3Xtw98mhnIl1q_Sfkre4ZYqRb34HhncIHphuR4XFdw8fXQDOMx5rWHROEEgOHu7k';
+    let swRegPromise=null,deferredInstall=null;
+    const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+    function notifyToast(m){if(typeof toast==='function')toast(m);}
+    function updatePushUi(){
+        const sub=document.getElementById('nexo-push-sub'),bdg=document.getElementById('nexo-push-badge');
+        if(!sub||!bdg)return;
+        if(!('Notification' in window)){sub.innerText='Not supported in this view';bdg.innerText='N/A';return;}
+        const p=Notification.permission;
+        if(p==='granted'){sub.innerText='Background lock-screen alerts active';bdg.innerText='ACTIVE';bdg.style.color='var(--success)';}
+        else if(p==='denied'){sub.innerText='Blocked in browser site settings';bdg.innerText='BLOCKED';bdg.style.color='var(--danger)';}
+        else{sub.innerText='Tap to allow alerts when console is closed';bdg.innerText='ENABLE';bdg.style.color='var(--accent)';}
+        const pwaSub=document.getElementById('nexo-pwa-sub');
+        if(pwaSub&&isStandalone())pwaSub.innerText='Installed as standalone app ✓';
+    }
+    function ensureSw(){
+        if(swRegPromise)return swRegPromise;
+        if(!('serviceWorker' in navigator))return Promise.resolve(null);
+        swRegPromise=navigator.serviceWorker.register('/firebase-messaging-sw.js',{scope:'/'}).then(()=>navigator.serviceWorker.ready).catch(()=>null);
+        return swRegPromise;
+    }
+    window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredInstall=e;const s=document.getElementById('nexo-pwa-sub');if(s)s.innerText='Ready to install on home screen';});
+    window.addEventListener('appinstalled',()=>{deferredInstall=null;updatePushUi();notifyToast('NEXO Admin installed ✓');});
+    window.nexoInstallPWA=async()=>{
+        if(isStandalone()){notifyToast('Already running as installed app ✓');return;}
+        if(deferredInstall){deferredInstall.prompt();try{await deferredInstall.userChoice;}catch(e){}deferredInstall=null;updatePushUi();return;}
+        if(/iphone|ipad|ipod/i.test(navigator.userAgent)){notifyToast('Tap Share → Add to Home Screen');return;}
+        notifyToast('Use Chrome menu (⋮) → Install App');
+    };
+    window.nexoSyncPushToken=async(meta)=>{
+        try{
+            window.__nexoPushMeta=meta||window.__nexoPushMeta||{};
+            updatePushUi();
+            if(!('Notification' in window)||Notification.permission!=='granted'||!firebase.messaging)return null;
+            const reg=await ensureSw();
+            const msg=firebase.messaging();
+            const tok=await msg.getToken({vapidKey:VAPID,serviceWorkerRegistration:reg||undefined}).catch(()=>null);
+            if(!tok)return null;
+            window.__nexoFcmToken=tok;
+            const idKey=((meta&&meta.email)||(meta&&meta.phone)||'admin').toLowerCase().replace(/[^a-z0-9_@.-]/g,'_');
+            await db.collection('fcmTokens').doc(`${APP_KEY}_${idKey}`).set({token:tok,app:APP_KEY,phone:(meta&&meta.phone)||'',email:((meta&&meta.email)||'').toLowerCase(),updatedMs:Date.now()},{merge:true}).catch(()=>{});
+            return tok;
+        }catch(e){return null;}
+    };
+    window.nexoEnablePushNotifications=async()=>{
+        if(!('Notification' in window)){notifyToast('Open in Chrome via HTTPS for push alerts');return;}
+        const perm=await Notification.requestPermission().catch(()=>'denied');
+        updatePushUi();
+        if(perm==='granted'){
+            const p=typeof adminProfile!=='undefined'?adminProfile:{};
+            await window.nexoSyncPushToken({phone:p.phone||'1671',email:p.email||'admin@nexo.app'});
+            notifyToast('Admin Push Alerts enabled ✓');
+        }else{notifyToast('Enable Notifications in Chrome Site Settings');}
+    };
+    window.nexoSendPush=(payload)=>{
+        try{
+            const b={...payload,excludeToken:window.__nexoFcmToken||''};
+            fetch('/api/send-push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(()=>{});
+        }catch(e){}
+    };
+    try{
+        if(firebase.messaging&&firebase.messaging.isSupported()){
+            ensureSw().then((reg)=>{
+                try{
+                    const msg=firebase.messaging();
+                    msg.onMessage((pl)=>{
+                        const d=(pl&&pl.data)||(pl&&pl.notification)||{};
+                        if(d.title){
+                            notifyToast(`${d.title}${d.body?': '+d.body:''}`);
+                            if(document.hidden&&Notification.permission==='granted'&&reg)reg.showNotification(d.title,{body:d.body||'',icon:`/icons/pwa-${APP_KEY}-192x192.png`,vibrate:[200,100,200]}).catch(()=>{});
+                        }
+                    });
+                }catch(e){}
+            });
+        }
+    }catch(e){}
+    const _origCol=db.collection.bind(db);
+    db.collection=function(colName){
+        const ref=_origCol(colName),_origAdd=ref.add.bind(ref);
+        ref.add=function(doc){
+            try{
+                if(doc&&!doc._skipPush&&colName==='notifications'){
+                    window.nexoSendPush({targetPhone:doc.targetPhone||'',targetEmail:doc.targetEmail||'',targetApp:doc.targetApp||'all',title:doc.title||'NEXO Admin Alert',body:doc.message||doc.body||'You have a new update from NEXO Operations.'});
+                }
+            }catch(e){}
+            return _origAdd(doc);
+        };
+        return ref;
+    };
+    setTimeout(updatePushUi,600);
+})('admin');
+
+const $=id=>document.getElementById(id);
+let adminPin=localStorage.getItem('nexo_admin_pin')||'112233';
+let adminTheme=localStorage.getItem('nexo_admin_theme')||'dark';
+const DEFAULT_ADMIN_PROFILE={name:'NEXO Operations',role:'Lead Administrator',email:'admin@nexo.app',phone:'1671',desk:'Dhaka HQ',bio:'Authorized master controller for NEXO Pay, Business & Card.',adminId:'NX-ADM-01'};
+let adminProfile=(()=>{try{return{...DEFAULT_ADMIN_PROFILE,...JSON.parse(localStorage.getItem('nexo_admin_profile')||'{}')};}catch(e){return{...DEFAULT_ADMIN_PROFILE};}})();
+let enteredPin='',isUnlocked=false,isSyncLoading=false,initialSnapCount=0;
+let usersList=[],bizList=[],cardsList=[],allTxList=[],ticketsList=[],offersList=[],giftsList=[];
+let currentTxFilter='all',currentAccFilter='all',currentSupFilter='all';
+let inspectedAcc=null,balAdjMode='credit',editingOfferId=null,activeChatKey=null,toastTimer=null;
+
+function haptic(){if(navigator.vibrate)navigator.vibrate(10);}
+function fmtMoney(n){return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtNum(n){return Number(n||0).toLocaleString('en-US');}
+function fmtDate(ms){if(!ms)return 'Recent';return new Date(ms).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
+function fmtTime(ms){if(!ms)return '';return new Date(ms).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function showToast(msg){const t=$('silent-toast'),x=$('silent-toast-text');if(!t||!x)return;x.innerText=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2300);}
+function slideToggle(barId,thumbId,idx){const b=$(barId),t=$(thumbId);if(!b||!t)return;t.style.transform=`translateX(${idx*100}%)`;b.querySelectorAll('.seg-btn').forEach((btn,i)=>btn.classList.toggle('active',i===idx));}
+
+function applyTheme(t){
+    adminTheme=t;localStorage.setItem('nexo_admin_theme',t);
+    document.body.classList.toggle('light-theme',t==='light');
+    const lbl=$('set-theme-lbl');if(lbl)lbl.innerText=t==='light'?'Clean Light':'Revolut Dark';
+    slideToggle('adm-theme-seg','adm-theme-thumb',t==='light'?1:0);
+}
+window.setTheme=(t)=>{haptic();applyTheme(t);showToast(t==='light'?'Clean Light Theme':'Revolut Dark Theme');};
+applyTheme(adminTheme);
+
+/* Startup & Passcode */
+setTimeout(()=>{
+    const sp=$('admin-splash');
+    if(sp){sp.style.opacity='0';setTimeout(()=>sp.style.display='none',300);}
+    if(isUnlocked)$('admin-dash').style.display='flex';
+    else $('admin-lock').style.display='flex';
+},680);
+
+function renderAdminProfileUI(){
+    if($('hdr-admin-name'))$('hdr-admin-name').innerText=adminProfile.name||'NEXO Operations';
+    if($('hdr-admin-role'))$('hdr-admin-role').innerText=adminProfile.role||'Lead Administrator';
+    if($('set-prof-name'))$('set-prof-name').innerText=adminProfile.name||'NEXO Operations';
+    if($('set-prof-sub'))$('set-prof-sub').innerText=`${adminProfile.role||'Lead Administrator'} · ${adminProfile.email||'admin@nexo.app'}`;
+    if($('lock-sub-txt'))$('lock-sub-txt').innerText=`Enter 6-digit passcode · ${adminProfile.name||'NEXO Operations'}`;
+    if($('prof-name'))$('prof-name').innerText=adminProfile.name||'NEXO Operations';
+    if($('prof-role-desk'))$('prof-role-desk').innerText=`${adminProfile.role||'Lead Administrator'} · ${adminProfile.desk||'Dhaka HQ'}`;
+    if(window.nexoSyncPushToken)window.nexoSyncPushToken({phone:adminProfile.phone||'1671',email:adminProfile.email||'admin@nexo.app'});
+    if($('prof-bio'))$('prof-bio').innerText=adminProfile.bio||'Authorized master controller for NEXO Pay, Business & Card.';
+    if($('prof-kv-name'))$('prof-kv-name').innerText=adminProfile.name||'NEXO Operations';
+    if($('prof-kv-role'))$('prof-kv-role').innerText=adminProfile.role||'Lead Administrator';
+    if($('prof-kv-email'))$('prof-kv-email').innerText=adminProfile.email||'admin@nexo.app';
+    if($('prof-kv-phone'))$('prof-kv-phone').innerText=adminProfile.phone||'1671';
+    if($('prof-kv-desk'))$('prof-kv-desk').innerText=adminProfile.desk||'Dhaka HQ';
+    if($('prof-kv-id'))$('prof-kv-id').innerText=adminProfile.adminId||'NX-ADM-01';
+}
+function updateProfileStats(){
+    const totalAcc=usersList.length+bizList.length+cardsList.length;
+    const openChats=buildSupportThreads().filter(t=>t.hasOpen).length;
+    if($('prof-stat-acc'))$('prof-stat-acc').innerText=fmtNum(totalAcc);
+    if($('prof-stat-tx'))$('prof-stat-tx').innerText=fmtNum(allTxList.length);
+    if($('prof-stat-offers'))$('prof-stat-offers').innerText=fmtNum(offersList.filter(o=>o.active!==false).length);
+    if($('prof-stat-chats'))$('prof-stat-chats').innerText=`${openChats} open / ${buildSupportThreads().length}`;
+}
+renderAdminProfileUI();
+
+let authReadyPromise=null;
+function updateAuthStatusBanner(){
+    const el=$('auth-conn-status');if(!el)return;
+    el.innerText=auth.currentUser?`Connected Firebase Auth: ${auth.currentUser.email||('UID '+auth.currentUser.uid.slice(0,8))}.`:'Not authenticated with Firebase Auth yet. Enter any NEXO account Email & PIN below or set Firebase Auth rules.';
+}
+async function ensureAdminAuth(){
+    if(auth.currentUser){updateAuthStatusBanner();return true;}
+    if(authReadyPromise)return authReadyPromise;
+    authReadyPromise=(async()=>{
+        await new Promise(res=>{
+            let done=false;
+            const unsub=auth.onAuthStateChanged(()=>{if(!done){done=true;unsub();res();}});
+            setTimeout(()=>{if(!done){done=true;res();}},1400);
+        });
+        if(auth.currentUser){updateAuthStatusBanner();return true;}
+        const opsEmail='nexo.ops.console@nexo.app',opsPass='NexoOps#2026';
+        try{await auth.signInWithEmailAndPassword(opsEmail,opsPass);}catch(e1){
+            try{await auth.createUserWithEmailAndPassword(opsEmail,opsPass);}catch(e2){
+                try{await auth.signInAnonymously();}catch(e3){}
+            }
+        }
+        updateAuthStatusBanner();
+        return !!auth.currentUser;
+    })();
+    const ok=await authReadyPromise;
+    authReadyPromise=null;
+    return ok;
+}
+
+ensureAdminAuth().then(()=>{
+    db.collection("adminConfig").doc("settings").get().then(d=>{if(d.exists&&d.data().pin){adminPin=String(d.data().pin);localStorage.setItem('nexo_admin_pin',adminPin);}}).catch(()=>{});
+    db.collection("adminConfig").doc("profile").get().then(d=>{if(d.exists){adminProfile={...DEFAULT_ADMIN_PROFILE,...d.data()};localStorage.setItem('nexo_admin_profile',JSON.stringify(adminProfile));renderAdminProfileUI();}}).catch(()=>{});
+});
+
+window.dialKey=(k)=>{
+    haptic();if(enteredPin.length>=6)return;
+    enteredPin+=k;syncLockDots();$('lock-err').innerText='';
+    if(enteredPin.length===6){
+        setTimeout(()=>{
+            if(enteredPin===adminPin){
+                isUnlocked=true;enteredPin='';syncLockDots();
+                $('admin-lock').style.display='none';$('admin-dash').style.display='flex';
+                startEcosystemSync();
+            }else{
+                $('admin-lock').classList.add('shake-effect');
+                setTimeout(()=>$('admin-lock').classList.remove('shake-effect'),380);
+                $('lock-err').innerText='Incorrect passcode';
+                enteredPin='';syncLockDots();
+            }
+        },120);
+    }
+};
+window.dialReset=()=>{haptic();enteredPin='';$('lock-err').innerText='';syncLockDots();};
+window.dialBack=()=>{haptic();enteredPin=enteredPin.slice(0,-1);syncLockDots();};
+function syncLockDots(){document.querySelectorAll('#admin-lock-dots .pin-box').forEach((d,i)=>d.classList.toggle('filled',i<enteredPin.length));}
+
+/* Navigation */
+window.switchTab=(name,idx)=>{
+    haptic();
+    document.querySelectorAll('.dashboard-tab').forEach(t=>t.style.display='none');
+    const el=$('tab-'+name);if(el)el.style.display='block';
+    document.querySelectorAll('.nav-item').forEach((n,i)=>n.classList.toggle('active',i===idx));
+};
+window.jumpAccounts=(filter)=>{
+    const idxMap={all:0,pay:1,agent:2,merchant:3,card:4};
+    window.switchTab('accounts',1);
+    window.setAccFilter(filter,idxMap[filter]||0);
+};
+window.closeSubPage=(id)=>{haptic();const p=$(id);if(!p)return;p.classList.remove('active');setTimeout(()=>{if(!p.classList.contains('active'))p.style.display='none';},250);};
+function openSubPage(id){const p=$(id);if(!p)return;p.style.display='flex';p.offsetHeight;p.classList.add('active');}
+window.openSettingsPage=()=>{haptic();renderAdminProfileUI();openSubPage('sub-settings');};
+
+/* Live Firestore Sync + Skeleton Loader State */
+let syncStarted=false,unsubListeners=[],payTxRaw=[],bizTxRaw=[],cardTxRaw=[],syncTimeout=null;
+function setSyncLoading(active){
+    isSyncLoading=active;
+    const bn=$('sync-loading-banner');
+    if(bn)bn.style.display=active?'flex':'none';
+}
+function markPermError(err){
+    setSyncLoading(false);
+    if(err&&String(err.code).includes('permission'))$('rules-warn-bar').style.display='flex';
+}
+function markSyncOk(){
+    $('rules-warn-bar').style.display='none';
+    initialSnapCount++;
+    if(initialSnapCount>=3)setSyncLoading(false);
+}
+
+async function startEcosystemSync(force=false){
+    if(syncStarted&&!force)return;
+    if(force){unsubListeners.forEach(u=>{try{u();}catch(e){}});unsubListeners=[];syncStarted=false;}
+    syncStarted=true;
+    initialSnapCount=0;
+    setSyncLoading(true);
+    renderSkeletons();
+    clearTimeout(syncTimeout);
+    syncTimeout=setTimeout(()=>{setSyncLoading(false);renderAll();},4200);
+    await ensureAdminAuth();
+    unsubListeners.push(
+        db.collection("users").onSnapshot(s=>{markSyncOk();usersList=[];s.forEach(d=>usersList.push({id:d.id,appKind:'pay',...d.data()}));renderAll();},markPermError),
+        db.collection("businesses").onSnapshot(s=>{markSyncOk();bizList=[];s.forEach(d=>{const x=d.data();bizList.push({id:d.id,appKind:x.role==='merchant'?'merchant':'agent',...x});});renderAll();},markPermError),
+        db.collection("cards").onSnapshot(s=>{markSyncOk();cardsList=[];s.forEach(d=>cardsList.push({id:d.id,appKind:'card',...d.data()}));renderAll();},markPermError),
+        db.collection("supportTickets").onSnapshot(s=>{
+            markSyncOk();ticketsList=[];
+            s.forEach(d=>{
+                const x=d.data();
+                const ms=x.createdMs||(x.timestamp&&x.timestamp.toMillis?x.timestamp.toMillis():0)||(x.repliedAtMs||0);
+                ticketsList.push({id:d.id,ms,...x});
+            });
+            ticketsList.sort((a,b)=>a.ms-b.ms);
+            renderAll();
+            if(activeChatKey&&$('sub-sup-chat').classList.contains('active'))renderActiveChatMessages();
+        },markPermError),
+        db.collection("adminOffers").onSnapshot(s=>{markSyncOk();offersList=[];s.forEach(d=>offersList.push({id:d.id,...d.data()}));offersList.sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));renderAll();},markPermError),
+        db.collection("giftCards").onSnapshot(s=>{markSyncOk();giftsList=[];s.forEach(d=>giftsList.push({id:d.id,...d.data()}));giftsList.sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));renderAll();},markPermError),
+        db.collection("transactions").onSnapshot(s=>{markSyncOk();payTxRaw=[];s.forEach(d=>{const x=d.data();const ms=x.createdMs||(x.timestamp&&x.timestamp.toMillis?x.timestamp.toMillis():0);payTxRaw.push({id:d.id,src:'pay',ms,...x});});mergeAllTx();},markPermError),
+        db.collection("businessTransactions").onSnapshot(s=>{markSyncOk();bizTxRaw=[];s.forEach(d=>{const x=d.data();const ms=x.createdMs||(x.timestamp&&x.timestamp.toMillis?x.timestamp.toMillis():0);bizTxRaw.push({id:d.id,src:'biz',ms,...x});});mergeAllTx();},markPermError),
+        db.collection("cardTransactions").onSnapshot(s=>{markSyncOk();cardTxRaw=[];s.forEach(d=>{const x=d.data();const ms=x.createdMs||(x.timestamp&&x.timestamp.toMillis?x.timestamp.toMillis():0);cardTxRaw.push({id:d.id,src:'card',ms,...x});});mergeAllTx();},markPermError),
+        db.collection("adminConfig").doc("profile").onSnapshot(d=>{if(d.exists){adminProfile={...DEFAULT_ADMIN_PROFILE,...d.data()};localStorage.setItem('nexo_admin_profile',JSON.stringify(adminProfile));renderAdminProfileUI();}},()=>{})
+    );
+}
+function renderSkeletons(){
+    const sk=`<div class="rev-row" style="cursor:default;"><div class="rev-row-left"><div class="rev-ico skel-line" style="width:38px;height:38px;"></div><div class="rev-meta"><div class="skel-line" style="width:60%;margin-bottom:6px;"></div><div class="skel-line" style="width:40%;height:9px;"></div></div></div><div class="skel-line" style="width:56px;height:14px;"></div></div>`.repeat(3);
+    if($('ov-tx-list'))$('ov-tx-list').innerHTML=sk;
+    if($('acc-list-container'))$('acc-list-container').innerHTML=sk;
+    if($('support-admin-list'))$('support-admin-list').innerHTML=sk;
+}
+window.retryCloudSync=async(showMsg=false)=>{haptic();await startEcosystemSync(true);if(showMsg)showToast('Sync refreshed');};
+window.signInCloudAdmin=async()=>{
+    const email=($('cloud-auth-email')?.value||'').trim().toLowerCase(),pin=($('cloud-auth-pin')?.value||'').trim();
+    if(!email||pin.length<6){showToast('Enter valid email & 6-digit PIN');return;}
+    try{
+        await auth.signInWithEmailAndPassword(email,pin);
+        updateAuthStatusBanner();
+        $('rules-modal').style.display='none';
+        await startEcosystemSync(true);
+        showToast('Cloud session connected');
+    }catch(err){showToast(err.message||'Authentication failed');}
+};
+
+function mergeAllTx(){allTxList=[...payTxRaw,...bizTxRaw,...cardTxRaw].sort((a,b)=>b.ms-a.ms);renderOverview();updateProfileStats();if(inspectedAcc&&$('sub-acc-detail').classList.contains('active'))renderAccountDetail();}
+function renderAll(){renderOverview();updateProfileStats();window.renderAccountsList();renderOffersList();renderGiftCardsList();window.renderSupportList();if($('sub-analytics').classList.contains('active'))renderAnalyticsPage();if(inspectedAcc&&$('sub-acc-detail').classList.contains('active')){const fresh=getCombinedAccounts().find(x=>x.appKind===inspectedAcc.appKind&&x.id===inspectedAcc.id);if(fresh){inspectedAcc=fresh;renderAccountDetail();}}}
+function getCombinedAccounts(){return [...usersList,...bizList,...cardsList];}
+
+/* Overview */
+function renderOverview(){
+    const payF=usersList.reduce((a,b)=>a+(Number(b.balance)||0),0);
+    const bizF=bizList.reduce((a,b)=>a+(Number(b.balance)||0),0);
+    const crdF=cardsList.reduce((a,b)=>a+(Number(b.balance)||0),0);
+    const totF=payF+bizF+crdF;
+    const totalAcc=usersList.length+bizList.length+cardsList.length;
+    const threads=buildSupportThreads();
+    const openThreads=threads.filter(t=>t.hasOpen).length;
+
+    $('ov-total-float').innerText=`৳ ${fmtMoney(totF)}`;
+    $('ov-total-accounts').innerText=`${totalAcc} accounts`;
+    $('ov-pay-float').innerText=`৳${fmtNum(Math.round(payF))}`;
+    $('ov-biz-float').innerText=`৳${fmtNum(Math.round(bizF))}`;
+    $('ov-card-float').innerText=`৳${fmtNum(Math.round(crdF))}`;
+
+    $('kpi-acc-cnt').innerText=totalAcc;
+    $('kpi-ticket-cnt').innerText=openThreads;
+    $('kpi-offer-cnt').innerText=offersList.filter(o=>o.active!==false).length;
+
+    const nb=$('nav-sup-badge');if(nb){nb.innerText=openThreads;nb.style.display=openThreads>0?'flex':'none';}
+
+    if(isSyncLoading&&!allTxList.length)return;
+    const filtered=allTxList.filter(t=>currentTxFilter==='all'||t.src===currentTxFilter);
+    $('ov-tx-count').innerText=`${filtered.length} items`;
+    const list=$('ov-tx-list');
+    list.innerHTML=filtered.length?filtered.slice(0,35).map(tx=>{
+        const appLbl=tx.src==='pay'?'Pay':(tx.src==='biz'?'Business':'Card');
+        const title=tx.merchant||(tx.type||'Transaction').replace(/_/g,' ');
+        const peer=tx.receiverPhone||tx.peerPhone||tx.senderPhone||tx.bizPhone||'';
+        return`<div class="rev-row" onclick="window.openTxModal('${tx.src}','${tx.id}')">
+            <div class="rev-row-left">
+                <div class="rev-ico"><i class='bx ${tx.src==='card'?'bx-credit-card':(tx.src==='biz'?'bx-store-alt':'bx-transfer')}'></i></div>
+                <div class="rev-meta"><h5>${esc(title)}</h5><p>${appLbl}${peer?' · '+esc(peer):''} · ${fmtDate(tx.ms)}</p></div>
+            </div>
+            <div class="rev-right"><strong class="num-tab">৳${fmtMoney(tx.amount)}</strong><small class="mono">${esc(tx.txnId||tx.id.slice(0,8))}</small></div>
+        </div>`;
+    }).join(''):`<p style="text-align:center;font-size:12px;color:var(--text-muted);padding:24px;">No transactions recorded</p>`;
+}
+
+window.setTxFilter=(f,idx)=>{haptic();currentTxFilter=f;slideToggle('tx-app-seg','tx-app-thumb',idx);renderOverview();};
+window.openTxModal=(src,id)=>{
+    haptic();const tx=allTxList.find(x=>x.src===src&&x.id===id);if(!tx)return;
+    $('txm-title').innerText=(tx.merchant||tx.type||'Transaction').replace(/_/g,' ');
+    $('txm-app').innerText=src==='pay'?'NEXO Pay Ledger':(src==='biz'?'NEXO Business Ledger':'NEXO Card Ledger');
+    $('txm-amt').innerText=`৳ ${fmtMoney(tx.amount)}`;
+    const skip=['id','src','ms','timestamp','involvedPhones'];
+    $('txm-rows').innerHTML=Object.entries(tx).filter(([k,v])=>!skip.includes(k)&&v!==undefined&&v!==null&&typeof v!=='object').map(([k,v])=>`<div class="kv-row"><span class="kv-k">${esc(k)}</span><span class="kv-v mono">${esc(v)}</span></div>`).join('');
+    $('tx-modal').style.display='flex';
+};
+
+/* Accounts Directory & Account 360° */
+window.setAccFilter=(f,idx)=>{haptic();currentAccFilter=f;slideToggle('acc-seg-bar','acc-seg-thumb',idx);window.renderAccountsList();};
+window.renderAccountsList=()=>{
+    if(isSyncLoading&&!getCombinedAccounts().length)return;
+    const q=($('acc-search')?.value||'').toLowerCase().trim();
+    const all=getCombinedAccounts().filter(a=>{
+        if(currentAccFilter!=='all'&&a.appKind!==currentAccFilter)return false;
+        if(!q)return true;
+        return`${a.name||''} ${a.businessName||''} ${a.ownerName||''} ${a.holderName||''} ${a.phone||''} ${a.email||a.id} ${a.cardNumber||''}`.toLowerCase().includes(q);
+    });
+    const titles={all:'All Accounts',pay:'NEXO Pay',agent:'Agents',merchant:'Merchants',card:'NEXO Cards'};
+    $('acc-list-title').innerText=titles[currentAccFilter]||'Accounts';
+    $('acc-list-count').innerText=`${all.length} found`;
+    const box=$('acc-list-container');
+    box.innerHTML=all.length?all.map(a=>{
+        const name=a.name||a.businessName||a.holderName||'NEXO Account';
+        const initials=name.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'NX';
+        const kindLabel=a.appKind==='pay'?'Pay':(a.appKind==='agent'?'Agent':(a.appKind==='merchant'?'Merchant':'Card'));
+        const stateText=a.isBlocked?' · Blocked':(a.isFrozen?' · Frozen':'');
+        return`<div class="rev-row" onclick="window.openAccountDetail('${a.appKind}','${encodeURIComponent(a.id)}')">
+            <div class="rev-row-left">
+                <div class="rev-ico" style="font-size:12px;">${esc(initials)}</div>
+                <div class="rev-meta"><h5>${esc(name)}</h5><p>${kindLabel} · ${esc(a.phone||a.email||a.id)}${stateText}</p></div>
+            </div>
+            <div class="rev-right"><strong class="num-tab" style="color:${a.isBlocked?'var(--danger)':'var(--text-main)'};">৳${fmtMoney(a.balance)}</strong><small>${esc((a.email||a.id).split('@')[0])}</small></div>
+        </div>`;
+    }).join(''):`<p style="text-align:center;font-size:12px;color:var(--text-muted);padding:26px;">No matching accounts</p>`;
+};
+
+function getAccCollection(acc){return acc.appKind==='pay'?'users':(acc.appKind==='card'?'cards':'businesses');}
+function getRankLabel(pts){const p=Number(pts)||0;if(p>=100000)return 'Infinity';if(p>=35000)return 'Diamond';if(p>=12000)return 'Gold';if(p>=3000)return 'Silver';return 'Bronze';}
+
+window.openAccountDetail=(kind,encId)=>{
+    haptic();const id=decodeURIComponent(encId);
+    const acc=getCombinedAccounts().find(x=>x.appKind===kind&&x.id===id);if(!acc)return;
+    inspectedAcc=acc;renderAccountDetail();openSubPage('sub-acc-detail');
+};
+
+function renderAccountDetail(){
+    const a=inspectedAcc;if(!a)return;
+    const name=a.name||a.businessName||a.holderName||'Account';
+    const isCard=a.appKind==='card',isBiz=a.appKind==='agent'||a.appKind==='merchant',isPay=a.appKind==='pay';
+    const rank=isPay||a.appKind==='agent'?getRankLabel(a.points):'Standard';
+
+    let extraRows='';
+    if(isPay){
+        const dps=a.activeDps?`৳${fmtNum(a.activeDps.savedAmount)} / ৳${fmtNum(a.activeDps.targetAmount)} (${a.activeDps.months}M)`:'None';
+        const loan=a.activeLoan?`৳${fmtNum(a.activeLoan.principal)} (${a.activeLoan.status||'active'})`:'None';
+        extraRows+=`<div class="kv-row"><span class="kv-k">Rank & Points</span><span class="kv-v num-tab">${rank} · ${fmtNum(a.points||0)} pts</span></div>
+            <div class="kv-row"><span class="kv-k">Referral Code</span><span class="kv-v mono">${esc(a.referralCode||'-')}</span></div>
+            <div class="kv-row"><span class="kv-k">Savings (DPS)</span><span class="kv-v">${esc(dps)}</span></div>
+            <div class="kv-row"><span class="kv-k">Active Loan</span><span class="kv-v">${esc(loan)}</span></div>`;
+    }else if(isBiz){
+        const dps=a.activeDps?`৳${fmtNum(a.activeDps.savedAmount)} / ৳${fmtNum(a.activeDps.targetAmount)} (${a.activeDps.months}M)`:'None';
+        extraRows+=`<div class="kv-row"><span class="kv-k">Business Role</span><span class="kv-v">${(a.role||'agent').toUpperCase()}</span></div>
+            <div class="kv-row"><span class="kv-k">Owner</span><span class="kv-v">${esc(a.ownerName||'-')}</span></div>
+            <div class="kv-row"><span class="kv-k">Commission Earned</span><span class="kv-v num-tab" style="color:var(--success);">৳${fmtMoney(a.totalCommission||0)}</span></div>
+            <div class="kv-row"><span class="kv-k">Rank / Points</span><span class="kv-v">${a.appKind==='merchant'?'Merchant':`${rank} · ${fmtNum(a.points||0)} pts`}</span></div>
+            <div class="kv-row"><span class="kv-k">Business Vault</span><span class="kv-v">${esc(dps)}</span></div>`;
+    }else if(isCard){
+        extraRows+=`<div class="kv-row"><span class="kv-k">Card Number</span><span class="kv-v mono">${esc(a.cardNumber||'-')}</span></div>
+            <div class="kv-row"><span class="kv-k">Expiry & CVV</span><span class="kv-v mono">${esc(a.expiry||'--/--')} · CVV ${esc(a.cvv||'---')}</span></div>
+            <div class="kv-row"><span class="kv-k">Network & Finish</span><span class="kv-v">${esc(a.network||'VISA')} · ${esc(a.cardSkin||'obsidian')}</span></div>
+            <div class="kv-row"><span class="kv-k">Single Limit</span><span class="kv-v num-tab">৳${fmtNum(a.singleLimit||25000)}</span></div>
+            <div class="kv-row"><span class="kv-k">Card Status</span><span class="kv-v">${a.isFrozen?'Frozen':'Active'} · Online Pay: ${a.onlinePayEnabled!==false?'On':'Off'}</span></div>`;
+    }
+
+    const relTx=allTxList.filter(t=>(a.email&&(t.senderEmail===a.email||t.receiverEmail===a.email||t.bizEmail===a.email||t.cardEmail===a.email))||(a.phone&&(t.senderPhone===a.phone||t.receiverPhone===a.phone||t.bizPhone===a.phone)));
+
+    $('acc-detail-body').innerHTML=`
+        <div class="rev-hero" style="padding:16px;">
+            <p style="font-size:11.5px;color:var(--text-muted);font-weight:600;">${a.appKind.toUpperCase()} · ${a.isBlocked?'Blocked':'Active'}</p>
+            <h3 style="font-size:18px;font-weight:700;margin-top:3px;">${esc(name)}</h3>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px;">${esc(a.email||a.id)} · ${esc(a.phone||'-')}</p>
+            <div class="num-tab" style="font-size:27px;font-weight:800;letter-spacing:-.8px;">৳ ${fmtMoney(a.balance)}</div>
+        </div>
+
+        <div class="action-grid-2">
+            <button type="button" class="act-btn primary" onclick="window.openBalModal('credit')"><i class='bx bx-plus'></i> Credit (+৳)</button>
+            <button type="button" class="act-btn" onclick="window.openBalModal('debit')"><i class='bx bx-minus'></i> Debit (-৳)</button>
+            <button type="button" class="act-btn" onclick="window.openEditFieldsModal()"><i class='bx bx-edit-alt'></i> Edit Info / PIN</button>
+            <button type="button" class="act-btn" onclick="window.openDirectNotifModal()"><i class='bx bx-bell'></i> Send Alert</button>
+            <button type="button" class="act-btn ${a.isBlocked?'':'danger-outline'}" onclick="window.toggleBlockAccount()"><i class='bx ${a.isBlocked?'bx-check-shield':'bx-block'}'></i> ${a.isBlocked?'Unblock Account':'Block Account'}</button>
+            ${isCard?`<button type="button" class="act-btn" onclick="window.toggleFreezeCard()"><i class='bx bx-snowflake'></i> ${a.isFrozen?'Unfreeze Card':'Freeze Card'}</button>`
+            :(isBiz?`<button type="button" class="act-btn" onclick="window.toggleBizRole()"><i class='bx bx-transfer'></i> Switch Role</button>`
+            :`<button type="button" class="act-btn" onclick="window.resetAccountPinQuick()"><i class='bx bx-key'></i> Reset PIN 123456</button>`)}
+        </div>
+
+        <div class="sec-head"><h4>Credentials & Profile</h4></div>
+        <div class="rev-group">
+            <div class="kv-row"><span class="kv-k">Phone</span><span class="kv-v mono">${esc(a.phone||'-')}</span></div>
+            <div class="kv-row"><span class="kv-k">Email</span><span class="kv-v">${esc(a.email||a.id)}</span></div>
+            <div class="kv-row" onclick="navigator.clipboard?.writeText('${esc(a.pin||'')}');showToast('PIN copied')" style="cursor:pointer;"><span class="kv-k">6-Digit PIN (Tap to copy)</span><span class="kv-v mono" style="color:var(--accent);">${esc(a.pin||'Hidden')}</span></div>
+            <div class="kv-row"><span class="kv-k">Security Word</span><span class="kv-v">${esc(a.security||'-')}</span></div>
+            <div class="kv-row"><span class="kv-k">Joined</span><span class="kv-v">${esc(a.createdAt||'-')}</span></div>
+            ${extraRows}
+        </div>
+
+        <button type="button" class="btn-main btn-danger" style="margin-bottom:16px;" onclick="window.openDeleteAccModal()">Delete Account Permanently</button>
+
+        <div class="sec-head"><h4>Account Ledger</h4><span class="muted">${relTx.length} items</span></div>
+        <div class="rev-group">
+            ${relTx.length?relTx.slice(0,20).map(tx=>`<div class="rev-row" onclick="window.openTxModal('${tx.src}','${tx.id}')">
+                <div class="rev-row-left"><div class="rev-meta"><h5>${esc((tx.merchant||tx.type||'TXN').replace(/_/g,' '))}</h5><p>${esc(tx.txnId||tx.id.slice(0,8))} · ${fmtDate(tx.ms)}</p></div></div>
+                <div class="rev-right"><strong class="num-tab">৳${fmtMoney(tx.amount)}</strong></div>
+            </div>`).join(''):`<p style="text-align:center;font-size:12px;color:var(--text-muted);padding:16px;">No linked transactions</p>`}
+        </div>
+    `;
+}
+
+window.openBalModal=(mode)=>{
+    haptic();if(!inspectedAcc)return;balAdjMode=mode;
+    $('bal-modal-title').innerText=mode==='credit'?'Credit Balance (+৳)':'Debit Balance (-৳)';
+    $('bal-modal-sub').innerText=`${inspectedAcc.name||inspectedAcc.businessName||inspectedAcc.holderName} · Current ৳${fmtMoney(inspectedAcc.balance)}`;
+    $('bal-adj-amt').value='';$('bal-adj-note').value=mode==='credit'?'Admin Credit':'Admin Deduction';
+    $('bal-modal').style.display='flex';
+};
+window.executeBalAdjust=async()=>{
+    if(!inspectedAcc)return;
+    const amt=parseFloat($('bal-adj-amt').value.trim()),note=$('bal-adj-note').value.trim()||'Admin Adjustment';
+    if(isNaN(amt)||amt<=0){showToast('Enter valid amount');return;}
+    const cur=Number(inspectedAcc.balance||0);
+    const next=balAdjMode==='credit'?Number((cur+amt).toFixed(2)):Math.max(0,Number((cur-amt).toFixed(2)));
+    const col=getAccCollection(inspectedAcc),docId=inspectedAcc.id,txnId='ADM'+Math.floor(10000000+Math.random()*90000000),nowMs=Date.now();
+    $('bal-modal').style.display='none';
+    await db.collection(col).doc(docId).update({balance:next}).catch(()=>{});
+    if(inspectedAcc.appKind==='pay'){
+        await db.collection("transactions").add({txnId,type:balAdjMode==='credit'?'receive':'merchant_pay',senderPhone:'NEXO Admin',senderName:'NEXO Admin',receiverPhone:inspectedAcc.phone||'',receiverName:inspectedAcc.name||'',amount:amt,note,timestamp:firebase.firestore.FieldValue.serverTimestamp(),createdMs:nowMs,involvedPhones:[inspectedAcc.phone].filter(Boolean)}).catch(()=>{});
+    }else if(inspectedAcc.appKind==='card'){
+        await db.collection("cardTransactions").add({txnId,cardEmail:docId,cardNumber:inspectedAcc.cardNumber||'',type:balAdjMode==='credit'?'credit':'debit',merchant:note,channel:'NEXO Admin',amount:amt,timestamp:firebase.firestore.FieldValue.serverTimestamp(),createdMs:nowMs}).catch(()=>{});
+    }else{
+        await db.collection("businessTransactions").add({txnId,bizEmail:docId,bizPhone:inspectedAcc.phone||'',type:balAdjMode==='credit'?'bonus':'send_money',peerName:'NEXO Admin',peerPhone:'ADMIN',amount:amt,createdMs:nowMs,timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    }
+    if(inspectedAcc.phone){
+        await db.collection("notifications").add({targetPhone:inspectedAcc.phone,title:balAdjMode==='credit'?`+৳${fmtMoney(amt)} Credited`:`-৳${fmtMoney(amt)} Debited`,message:note,icon:balAdjMode==='credit'?'bx-plus-circle':'bx-info-circle',color:balAdjMode==='credit'?'var(--success)':'var(--danger)',createdMs:nowMs,timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    }
+    showToast(`Balance updated to ৳${fmtMoney(next)}`);
+};
+
+window.openEditFieldsModal=()=>{
+    haptic();if(!inspectedAcc)return;
+    $('ef-sub').innerText=inspectedAcc.email||inspectedAcc.id;
+    $('ef-name').value=inspectedAcc.name||inspectedAcc.businessName||inspectedAcc.holderName||'';
+    $('ef-pin').value=inspectedAcc.pin||'';
+    $('ef-pts-wrap').style.display=inspectedAcc.appKind==='card'?'none':'block';
+    $('ef-lim-wrap').style.display=inspectedAcc.appKind==='card'?'block':'none';
+    $('ef-pts').value=Number(inspectedAcc.points||0);
+    $('ef-lim').value=Number(inspectedAcc.singleLimit||25000);
+    $('edit-fields-modal').style.display='flex';
+};
+window.saveEditedFields=async()=>{
+    if(!inspectedAcc)return;
+    const nm=$('ef-name').value.trim(),pin=$('ef-pin').value.trim();
+    if(!nm||!/^\d{6}$/.test(pin)){showToast('Enter valid name & 6-digit PIN');return;}
+    const upd={pin};
+    if(inspectedAcc.appKind==='pay'){upd.name=nm;upd.points=Math.max(0,parseInt($('ef-pts').value)||0);}
+    else if(inspectedAcc.appKind==='card'){upd.holderName=nm.toUpperCase();upd.singleLimit=Math.max(500,parseInt($('ef-lim').value)||25000);}
+    else{upd.businessName=nm;upd.points=Math.max(0,parseInt($('ef-pts').value)||0);}
+    $('edit-fields-modal').style.display='none';
+    await db.collection(getAccCollection(inspectedAcc)).doc(inspectedAcc.id).update(upd).catch(()=>{});
+    showToast('Account saved');
+};
+
+window.toggleBlockAccount=async()=>{
+    haptic();if(!inspectedAcc)return;
+    const next=!inspectedAcc.isBlocked;
+    await db.collection(getAccCollection(inspectedAcc)).doc(inspectedAcc.id).update({isBlocked:next}).catch(()=>{});
+    if(inspectedAcc.phone)await db.collection("notifications").add({targetPhone:inspectedAcc.phone,title:next?'Account Suspended':'Account Restored',message:next?'Your account was suspended by NEXO Operations.':'Your account access has been restored.',icon:next?'bx-block':'bx-check-shield',color:next?'var(--danger)':'var(--success)',createdMs:Date.now(),timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    showToast(next?'Account blocked':'Account unblocked');
+};
+window.toggleFreezeCard=async()=>{
+    haptic();if(!inspectedAcc||inspectedAcc.appKind!=='card')return;
+    const next=!inspectedAcc.isFrozen;
+    await db.collection("cards").doc(inspectedAcc.id).update({isFrozen:next}).catch(()=>{});
+    showToast(next?'Card frozen':'Card unfrozen');
+};
+window.toggleBizRole=async()=>{
+    haptic();if(!inspectedAcc)return;
+    const next=(inspectedAcc.role||'agent')==='merchant'?'agent':'merchant';
+    await db.collection("businesses").doc(inspectedAcc.id).update({role:next}).catch(()=>{});
+    showToast(`Switched to ${next}`);
+};
+window.resetAccountPinQuick=async()=>{
+    haptic();if(!inspectedAcc)return;
+    await db.collection(getAccCollection(inspectedAcc)).doc(inspectedAcc.id).update({pin:'123456'}).catch(()=>{});
+    showToast('PIN reset to 123456');
+};
+
+window.openDirectNotifModal=()=>{
+    haptic();if(!inspectedAcc)return;
+    $('ns-modal-title').innerText='Send Alert';
+    $('ns-modal-sub').innerText=`To ${inspectedAcc.name||inspectedAcc.businessName||inspectedAcc.holderName}`;
+    $('ns-phone').value=inspectedAcc.phone||'';
+    $('ns-title').value='';$('ns-msg').value='';
+    $('notif-send-modal').style.display='flex';
+};
+window.openBroadcastModal=()=>{
+    haptic();
+    $('ns-modal-title').innerText='Broadcast Announcement';
+    $('ns-modal-sub').innerText='Sends notification across all connected NEXO apps';
+    $('ns-phone').value='ALL';$('ns-title').value='';$('ns-msg').value='';
+    $('notif-send-modal').style.display='flex';
+};
+window.executeSendNotif=async()=>{
+    const target=$('ns-phone').value.trim(),title=$('ns-title').value.trim(),message=$('ns-msg').value.trim();
+    if(!target||!title||!message){showToast('Complete all fields');return;}
+    $('notif-send-modal').style.display='none';
+    await db.collection("notifications").add({targetPhone:target,title,message,icon:'bx-bell',color:'var(--accent)',createdMs:Date.now(),timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    showToast(target==='ALL'?'Broadcast sent':'Notification sent');
+};
+
+window.openDeleteAccModal=()=>{
+    haptic();if(!inspectedAcc)return;
+    $('del-acc-warn').innerText=`Delete ${inspectedAcc.name||inspectedAcc.businessName||inspectedAcc.holderName} (${inspectedAcc.email||inspectedAcc.id}) permanently?`;
+    $('del-acc-modal').style.display='flex';
+};
+window.confirmDeleteAccount=async()=>{
+    if(!inspectedAcc)return;
+    const col=getAccCollection(inspectedAcc),docId=inspectedAcc.id;
+    $('del-acc-modal').style.display='none';
+    await db.collection(col).doc(docId).delete().catch(()=>{});
+    window.closeSubPage('sub-acc-detail');inspectedAcc=null;
+    showToast('Account deleted');
+};
+
+/* Offers & Gift Cards (Dedicated Full-Screen Sub-Pages) */
+function renderOffersList(){
+    const el=$('offers-admin-list');
+    el.innerHTML=offersList.length?offersList.map(o=>`<div class="rev-row" style="cursor:default;flex-direction:column;align-items:stretch;gap:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+            <div style="min-width:0;flex:1;">
+                <h5 style="font-size:13px;font-weight:700;">${esc(o.title)}</h5>
+                <p style="font-size:11px;color:var(--text-muted);margin-top:2px;">${esc(o.desc)}</p>
+            </div>
+            <span style="font-size:11px;font-weight:700;color:${o.active!==false?'var(--success)':'var(--text-muted)'};flex-shrink:0;">${o.active!==false?'Live':'Paused'}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span style="font-size:11px;color:var(--text-muted);">${esc((o.targetApp||'all').toUpperCase())} · ${esc(o.badge||'Promo')} · <span class="mono">${esc(o.code||'-')}</span></span>
+            <div style="display:flex;gap:10px;">
+                <button type="button" onclick="window.openOfferEditor('${o.id}')" style="background:none;border:none;color:var(--accent);font-size:11.5px;font-weight:600;cursor:pointer;">Edit</button>
+                <button type="button" onclick="window.toggleOfferStatus('${o.id}',${o.active!==false})" style="background:none;border:none;color:var(--text-main);font-size:11.5px;font-weight:600;cursor:pointer;">${o.active!==false?'Pause':'Enable'}</button>
+                <button type="button" onclick="window.deleteOffer('${o.id}')" style="background:none;border:none;color:var(--danger);font-size:11.5px;font-weight:600;cursor:pointer;">Delete</button>
+            </div>
+        </div>
+    </div>`).join(''):`<p style="text-align:center;font-size:12px;color:var(--text-muted);padding:20px;">No active offers. Tap + Create Offer.</p>`;
+}
+window.updateOfferPreview=()=>{
+    const appMap={all:'ALL APPS',pay:'NEXO PAY',business:'NEXO BUSINESS',card:'NEXO CARD'};
+    $('ofm-prev-app').innerText=appMap[$('ofm-app').value]||'ALL APPS';
+    $('ofm-prev-badge').innerText=$('ofm-badge').value.trim()||'+2% Cashback';
+    $('ofm-prev-title').innerText=$('ofm-title').value.trim()||'Offer Title Preview';
+    $('ofm-prev-desc').innerText=$('ofm-desc').value.trim()||'Live promotion card preview across selected NEXO apps.';
+    $('ofm-prev-code').innerText=($('ofm-code').value.trim()||'NEXO25').toUpperCase();
+    $('ofm-prev-min').innerText='৳'+fmtNum(parseInt($('ofm-min').value)||0);
+};
+window.genOfferCode=()=>{haptic();$('ofm-code').value='NEXO'+Math.floor(100+Math.random()*900);window.updateOfferPreview();};
+window.openOfferEditor=(id=null)=>{
+    haptic();editingOfferId=id;
+    const ex=id?offersList.find(x=>x.id===id):null;
+    $('ofm-heading').innerText=ex?'Edit Offer':'Create Offer';
+    $('ofm-save-btn').innerText=ex?'Save Changes':'Publish Offer';
+    $('ofm-title').value=ex?ex.title||'':'';
+    $('ofm-desc').value=ex?ex.desc||'':'';
+    $('ofm-app').value=ex?ex.targetApp||'all':'all';
+    $('ofm-badge').value=ex?ex.badge||'':'+2% Cashback';
+    $('ofm-code').value=ex?ex.code||'':'NEXO25';
+    $('ofm-min').value=ex?Number(ex.minSpend||0):500;
+    $('ofm-broadcast').checked=!ex;
+    window.updateOfferPreview();
+    openSubPage('sub-offer-editor');
+};
+window.saveOffer=async()=>{
+    const title=$('ofm-title').value.trim(),desc=$('ofm-desc').value.trim(),targetApp=$('ofm-app').value,badge=$('ofm-badge').value.trim()||'Special',code=$('ofm-code').value.trim().toUpperCase()||'NEXO',minSpend=parseInt($('ofm-min').value)||0;
+    if(!title||!desc){showToast('Enter offer title & description');return;}
+    window.closeSubPage('sub-offer-editor');
+    if(editingOfferId){
+        await db.collection("adminOffers").doc(editingOfferId).update({title,desc,targetApp,badge,code,minSpend}).catch(()=>{});
+        showToast('Offer updated');
+    }else{
+        await db.collection("adminOffers").add({title,desc,targetApp,badge,code,minSpend,active:true,createdMs:Date.now(),timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+        if($('ofm-broadcast').checked){
+            await db.collection("notifications").add({targetPhone:'ALL',title:`${title}`,message:`${desc} (Code: ${code})`,icon:'bx-purchase-tag-alt',color:'var(--accent)',createdMs:Date.now(),timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+        }
+        showToast('Offer published');
+    }
+    editingOfferId=null;
+};
+window.toggleOfferStatus=async(id,cur)=>{haptic();await db.collection("adminOffers").doc(id).update({active:!cur}).catch(()=>{});showToast(!cur?'Offer enabled':'Offer paused');};
+window.deleteOffer=async(id)=>{haptic();await db.collection("adminOffers").doc(id).delete().catch(()=>{});showToast('Offer deleted');};
+
+function renderGiftCardsList(){
+    const el=$('giftcards-admin-list');
+    el.innerHTML=giftsList.length?giftsList.slice(0,25).map(g=>{
+        const code=g.code||g.id;
+        const isRed=g.redeemed===true||g.status==='redeemed';
+        const subText=isRed?`REDEEMED${g.redeemedBy?' · By '+g.redeemedBy:''}`:`ACTIVE · From ${g.creatorPhone||g.senderPhone||'NEXO Admin'}`;
+        return`<div class="rev-row" style="cursor:default;">
+        <div class="rev-row-left" onclick="window.copyGiftCode('${esc(code)}')" style="cursor:pointer;">
+            <div class="rev-ico" style="${isRed?'opacity:.55;':'color:var(--accent);'}"><i class='bx bx-gift'></i></div>
+            <div class="rev-meta"><h5 class="mono">${esc(code)} <i class='bx bx-copy' style="font-size:12px;color:var(--text-muted);margin-left:3px;"></i></h5><p style="color:${isRed?'var(--text-muted)':'var(--success)'};">${esc(subText)}</p></div>
+        </div>
+        <div class="rev-right"><strong class="num-tab">৳${fmtMoney(g.amount)}</strong>${!isRed?`<button type="button" onclick="window.deleteGiftCard('${esc(g.id)}','${esc(code)}')" style="background:none;border:none;color:var(--danger);font-size:10.5px;font-weight:600;cursor:pointer;margin-top:2px;">Revoke</button>`:`<small style="color:var(--text-muted);">Redeemed</small>`}</div>
+    </div>`;}).join(''):`<p style="text-align:center;font-size:12px;color:var(--text-muted);padding:16px;">No gift cards found</p>`;
+}
+window.copyGiftCode=(code)=>{if(!code)return;navigator.clipboard?.writeText(code).catch(()=>{});haptic();showToast(`Copied ${code}`);};
+window.genGiftCode=()=>{const c='NEXO-'+Math.random().toString(36).substring(2,6).toUpperCase()+'-'+Math.floor(1000+Math.random()*9000);$('gc-code-inp').value=c;$('gc-prev-code').innerText=c;};
+window.openGiftCardPage=()=>{haptic();$('gc-amt-inp').value='500';$('gc-prev-amt').innerText='৳500';$('gc-note-inp').value='NEXO Admin Voucher';window.genGiftCode();openSubPage('sub-giftcard-editor');};
+window.createAdminGiftCard=async()=>{
+    const amt=parseFloat($('gc-amt-inp').value),code=$('gc-code-inp').value.trim().toUpperCase().replace(/\s+/g,''),note=$('gc-note-inp').value.trim()||'NEXO Admin Voucher';
+    if(isNaN(amt)||amt<50||!code){showToast('Enter valid amount (min ৳50) & code');return;}
+    window.closeSubPage('sub-giftcard-editor');
+    const gcDoc={code,amount:amt,note,theme:note,creatorPhone:'NEXO Admin',senderPhone:'NEXO Admin',status:'active',redeemed:false,createdMs:Date.now()};
+    try{const lg=JSON.parse(localStorage.getItem('nexo_giftcards')||'{}');lg[code]=gcDoc;localStorage.setItem('nexo_giftcards',JSON.stringify(lg));}catch(e){}
+    await db.collection("giftCards").doc(code).set({...gcDoc,timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    showToast(`Gift Card ${code} issued`);
+};
+window.deleteGiftCard=async(id,code='')=>{haptic();try{const lg=JSON.parse(localStorage.getItem('nexo_giftcards')||'{}');delete lg[code||id];delete lg[id];localStorage.setItem('nexo_giftcards',JSON.stringify(lg));}catch(e){}await db.collection("giftCards").doc(id).delete().catch(()=>{});showToast('Gift card revoked');};
+
+/* Ecosystem Analytics Page */
+function renderAnalyticsPage(){
+    const payF=usersList.reduce((a,b)=>a+(Number(b.balance)||0),0);
+    const agList=bizList.filter(b=>b.role!=='merchant'),mrList=bizList.filter(b=>b.role==='merchant');
+    const agF=agList.reduce((a,b)=>a+(Number(b.balance)||0),0),mrF=mrList.reduce((a,b)=>a+(Number(b.balance)||0),0);
+    const crdF=cardsList.reduce((a,b)=>a+(Number(b.balance)||0),0);
+    const dpsTotal=getCombinedAccounts().reduce((a,b)=>a+(b.activeDps?Number(b.activeDps.savedAmount||0):0),0);
+    const loanTotal=usersList.reduce((a,b)=>a+(b.activeLoan?Number(b.activeLoan.principal||0):0),0);
+    const commTotal=bizList.reduce((a,b)=>a+(Number(b.totalCommission)||0),0);
+    const blockedCnt=getCombinedAccounts().filter(a=>a.isBlocked).length;
+    const txVol=allTxList.reduce((a,b)=>a+(Number(b.amount)||0),0);
+
+    $('analytics-body').innerHTML=`
+        <div class="rev-hero">
+            <span class="rev-hero-label">Cumulative Transaction Volume</span>
+            <div class="rev-hero-amt num-tab">৳ ${fmtMoney(txVol)}</div>
+            <div class="rev-split">
+                <div class="rev-split-cell" style="cursor:default;"><span>Pay Txns</span><strong class="num-tab">${payTxRaw.length}</strong></div>
+                <div class="rev-split-cell" style="cursor:default;"><span>Business</span><strong class="num-tab">${bizTxRaw.length}</strong></div>
+                <div class="rev-split-cell" style="cursor:default;"><span>Card Txns</span><strong class="num-tab">${cardTxRaw.length}</strong></div>
+            </div>
+        </div>
+        <div class="sec-head"><h4>Account & Balance Breakdown</h4></div>
+        <div class="rev-group">
+            <div class="kv-row"><span class="kv-k">Personal Wallets (${usersList.length})</span><span class="kv-v num-tab">৳ ${fmtMoney(payF)}</span></div>
+            <div class="kv-row"><span class="kv-k">NEXO Agents (${agList.length})</span><span class="kv-v num-tab">৳ ${fmtMoney(agF)}</span></div>
+            <div class="kv-row"><span class="kv-k">NEXO Merchants (${mrList.length})</span><span class="kv-v num-tab">৳ ${fmtMoney(mrF)}</span></div>
+            <div class="kv-row"><span class="kv-k">NEXO Cards (${cardsList.length})</span><span class="kv-v num-tab">৳ ${fmtMoney(crdF)}</span></div>
+        </div>
+        <div class="sec-head"><h4>Vaults, Loans & Risk</h4></div>
+        <div class="rev-group">
+            <div class="kv-row"><span class="kv-k">Savings DPS Reserve</span><span class="kv-v num-tab" style="color:var(--success);">৳ ${fmtMoney(dpsTotal)}</span></div>
+            <div class="kv-row"><span class="kv-k">Active EMI Loan Book</span><span class="kv-v num-tab">৳ ${fmtMoney(loanTotal)}</span></div>
+            <div class="kv-row"><span class="kv-k">Agent Commissions Paid</span><span class="kv-v num-tab">৳ ${fmtMoney(commTotal)}</span></div>
+            <div class="kv-row"><span class="kv-k">Suspended / Blocked Accounts</span><span class="kv-v num-tab" style="color:${blockedCnt?'var(--danger)':'var(--text-main)'};">${blockedCnt}</span></div>
+        </div>
+        <button type="button" class="btn-main btn-secondary" onclick="window.exportEcosystemJson()"><i class='bx bx-download'></i> Export Full Ecosystem Backup</button>
+    `;
+}
+window.openAnalyticsPage=()=>{haptic();renderAnalyticsPage();openSubPage('sub-analytics');};
+
+/* Customer Support Live Chat (WhatsApp / Imo Style) */
+function threadKey(t){return(t.userEmail||t.userPhone||t.id).toLowerCase();}
+function buildSupportThreads(){
+    const map=new Map();
+    ticketsList.forEach(t=>{
+        const key=threadKey(t);
+        if(!map.has(key))map.set(key,{key,userName:t.userName||t.userPhone||'Customer',userEmail:t.userEmail||'',userPhone:t.userPhone||'',app:t.app||'NEXO',docs:[],messages:[],lastMs:0,hasOpen:false});
+        const th=map.get(key);
+        th.docs.push(t);
+        if(t.userName)th.userName=t.userName;
+        if(t.userPhone)th.userPhone=t.userPhone;
+        if(t.app)th.app=t.app;
+        if((t.status||'open')==='open')th.hasOpen=true;
+        if(t.message){
+            const ms=t.createdMs||(t.timestamp&&t.timestamp.toMillis?t.timestamp.toMillis():t.ms)||0;
+            th.messages.push({sender:'user',text:t.message,ms,docId:t.id});
+            if(ms>th.lastMs)th.lastMs=ms;
+        }
+        if(Array.isArray(t.replies)&&t.replies.length){
+            t.replies.forEach(r=>{th.messages.push({sender:'admin',text:r.text,ms:r.ms||t.repliedAtMs||0,docId:t.id});if((r.ms||0)>th.lastMs)th.lastMs=r.ms||0;});
+        }else if(t.adminReply){
+            const rms=t.repliedAtMs||(t.ms+1);
+            th.messages.push({sender:'admin',text:t.adminReply,ms:rms,docId:t.id});
+            if(rms>th.lastMs)th.lastMs=rms;
+        }
+    });
+    const arr=Array.from(map.values());
+    arr.forEach(th=>th.messages.sort((a,b)=>a.ms-b.ms));
+    arr.sort((a,b)=>(b.lastMs||0)-(a.lastMs||0));
+    return arr;
+}
+
+window.setSupFilter=(f,idx)=>{haptic();currentSupFilter=f;slideToggle('sup-seg-bar','sup-seg-thumb',idx);window.renderSupportList();};
+window.renderSupportList=()=>{
+    if(isSyncLoading&&!ticketsList.length)return;
+    const q=($('sup-search')?.value||'').toLowerCase().trim();
+    const allThreads=buildSupportThreads();
+    const threads=allThreads.filter(th=>{
+        if(currentSupFilter==='open'&&!th.hasOpen)return false;
+        if(currentSupFilter==='resolved'&&th.hasOpen)return false;
+        if(!q)return true;
+        return`${th.userName} ${th.userPhone} ${th.userEmail} ${th.app} ${th.messages.map(m=>m.text).join(' ')}`.toLowerCase().includes(q);
+    });
+    if($('sup-thread-cnt'))$('sup-thread-cnt').innerText=`${threads.length} chats`;
+    const el=$('support-admin-list');
+    el.innerHTML=threads.length?threads.map(th=>{
+        const last=th.messages[th.messages.length-1];
+        const initials=th.userName.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'CS';
+        return`<div class="rev-row" onclick="window.openSupportChat('${encodeURIComponent(th.key)}')">
+            <div class="rev-row-left">
+                <div class="rev-ico" style="font-size:12px;">${esc(initials)}</div>
+                <div class="rev-meta"><h5>${esc(th.userName)}</h5><p>${esc(last?last.text:'No messages')}</p></div>
+            </div>
+            <div class="rev-right">
+                <strong style="font-size:11px;color:${th.hasOpen?'var(--accent)':'var(--text-muted)'};">${th.hasOpen?'Open':'Resolved'}</strong>
+                <small>${esc(th.app.replace('NEXO ',''))} · ${fmtDate(th.lastMs)}</small>
+            </div>
+        </div>`;
+    }).join(''):`<p style="text-align:center;font-size:12px;color:var(--text-muted);padding:26px;">No support conversations</p>`;
+};
+
+window.openSupportChat=(encKey)=>{
+    haptic();activeChatKey=decodeURIComponent(encKey);
+    renderActiveChatMessages();
+    openSubPage('sub-sup-chat');
+};
+window.closeSupportChat=()=>{activeChatKey=null;window.closeSubPage('sub-sup-chat');};
+
+function renderActiveChatMessages(){
+    const th=buildSupportThreads().find(x=>x.key===activeChatKey);
+    if(!th)return;
+    $('chat-hdr-name').innerText=th.userName;
+    $('chat-hdr-sub').innerText=`Online · ${th.app} · ${th.userPhone||th.userEmail}`;
+    const stb=$('chat-status-btn');
+    if(stb)stb.innerHTML=th.hasOpen?`<i class='bx bx-check-circle' style="color:var(--success);"></i>`:`<i class='bx bx-revision'></i>`;
+    const box=$('admin-chat-msgs');
+    box.innerHTML=`<span class="wa-day-pill">Live Support Conversation</span>`+th.messages.map(m=>`<div class="wa-row ${m.sender==='admin'?'out':'in'}"><div class="wa-bubble"><div>${esc(m.text)}</div><div class="wa-meta"><span>${fmtTime(m.ms)||'Just now'}</span>${m.sender==='admin'?`<i class='bx bx-check-double'></i>`:''}</div></div></div>`).join('');
+    box.scrollTop=box.scrollHeight;
+}
+
+window.sendQuickChatReply=(txt)=>{haptic();$('admin-chat-input').value=txt;window.sendChatReply();};
+window.sendChatReply=async()=>{
+    if(!activeChatKey)return;
+    const inp=$('admin-chat-input'),rep=inp.value.trim();
+    if(!rep)return;
+    const th=buildSupportThreads().find(x=>x.key===activeChatKey);
+    if(!th||!th.docs.length)return;
+    haptic();inp.value='';
+    const targetDoc=th.docs[th.docs.length-1];
+    const nowMs=Date.now();
+    const existingReplies=Array.isArray(targetDoc.replies)?targetDoc.replies:(targetDoc.adminReply?[{text:targetDoc.adminReply,ms:targetDoc.repliedAtMs||nowMs-1000,sender:'admin'}]:[]);
+    const updatedReplies=[...existingReplies,{text:rep,ms:nowMs,sender:'admin'}];
+    await Promise.all(th.docs.map(d=>{
+        if(d.id===targetDoc.id)return db.collection("supportTickets").doc(d.id).update({replies:updatedReplies,adminReply:rep,status:'resolved',repliedAtMs:nowMs,repliedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+        if((d.status||'open')==='open')return db.collection("supportTickets").doc(d.id).update({status:'resolved'}).catch(()=>{});
+        return Promise.resolve();
+    }));
+    if(th.userPhone){
+        await db.collection("notifications").add({targetPhone:th.userPhone,title:'Support Reply',message:rep,icon:'bx-message-dots',color:'var(--accent)',createdMs:nowMs,timestamp:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    }
+};
+
+window.toggleChatResolved=async()=>{
+    if(!activeChatKey)return;
+    const th=buildSupportThreads().find(x=>x.key===activeChatKey);
+    if(!th)return;
+    haptic();
+    const next=th.hasOpen?'resolved':'open';
+    await Promise.all(th.docs.map(d=>db.collection("supportTickets").doc(d.id).update({status:next}).catch(()=>{})));
+    showToast(next==='resolved'?'Marked resolved':'Conversation reopened');
+};
+
+window.inspectActiveChatOwner=()=>{
+    if(!activeChatKey)return;
+    const th=buildSupportThreads().find(x=>x.key===activeChatKey);
+    if(!th)return;
+    const match=getCombinedAccounts().find(a=>(th.userEmail&&a.id===th.userEmail)||(th.userPhone&&a.phone===th.userPhone));
+    if(!match){showToast('Account not found');return;}
+    window.closeSupportChat();
+    window.openAccountDetail(match.appKind,encodeURIComponent(match.id));
+};
+
+window.deleteActiveChatThread=async()=>{
+    if(!activeChatKey)return;
+    const th=buildSupportThreads().find(x=>x.key===activeChatKey);
+    if(!th)return;
+    haptic();
+    window.closeSupportChat();
+    await Promise.all(th.docs.map(d=>db.collection("supportTickets").doc(d.id).delete().catch(()=>{})));
+    showToast('Conversation deleted');
+};
+
+/* Settings, Profile & Passcode Operations */
+window.openAdminProfile=()=>{
+    haptic();
+    renderAdminProfileUI();
+    updateProfileStats();
+    openSubPage('sub-admin-profile');
+};
+window.openEditAdminProfileModal=()=>{
+    haptic();
+    $('eap-name').value=adminProfile.name||'';
+    $('eap-role').value=adminProfile.role||'';
+    $('eap-email').value=adminProfile.email||'';
+    $('eap-phone').value=adminProfile.phone||'';
+    $('eap-desk').value=adminProfile.desk||'';
+    $('eap-bio').value=adminProfile.bio||'';
+    $('edit-admin-profile-modal').style.display='flex';
+};
+window.saveAdminProfile=async()=>{
+    const name=$('eap-name').value.trim(),role=$('eap-role').value.trim()||'Lead Administrator',email=$('eap-email').value.trim()||'admin@nexo.app',phone=$('eap-phone').value.trim()||'1671',desk=$('eap-desk').value.trim()||'Dhaka HQ',bio=$('eap-bio').value.trim()||'Authorized master controller for NEXO Pay, Business & Card.';
+    if(!name){showToast('Enter administrator name');return;}
+    adminProfile={...adminProfile,name,role,email,phone,desk,bio,updatedAt:Date.now()};
+    localStorage.setItem('nexo_admin_profile',JSON.stringify(adminProfile));
+    renderAdminProfileUI();
+    $('edit-admin-profile-modal').style.display='none';
+    await db.collection("adminConfig").doc("profile").set(adminProfile,{merge:true}).catch(()=>{});
+    showToast('Profile updated');
+};
+window.updPinBar=(inp,barId)=>{const b=$(barId);if(!b)return;const n=inp.value.length;b.style.width=((n/6)*100)+'%';b.style.background=n===6?'var(--success)':'var(--accent)';};
+window.togglePassVis=(id,btn)=>{haptic();const el=$(id);if(!el)return;el.type=el.type==='password'?'text':'password';btn.innerHTML=el.type==='password'?`<i class='bx bx-hide'></i>`:`<i class='bx bx-show'></i>`;};
+window.openChangePinPage=()=>{
+    haptic();
+    ['cp-cur-pin','adm-new-pin','adm-cnf-pin'].forEach(i=>{if($(i))$(i).value='';});
+    ['cp-cur-bar','cp-new-bar','cp-cnf-bar'].forEach(i=>{if($(i))$(i).style.width='0%';});
+    openSubPage('sub-change-pin');
+};
+window.saveAdminPin=async()=>{
+    const cur=$('cp-cur-pin').value.trim(),p=$('adm-new-pin').value.trim(),c=$('adm-cnf-pin').value.trim();
+    if(cur!==adminPin){showToast('Current passcode is incorrect');return;}
+    if(!/^\d{6}$/.test(p)){showToast('Enter 6 numeric digits');return;}
+    if(p!==c){showToast('New passcodes do not match');return;}
+    adminPin=p;localStorage.setItem('nexo_admin_pin',p);
+    await db.collection("adminConfig").doc("settings").set({pin:p,updatedAt:Date.now()},{merge:true}).catch(()=>{});
+    window.closeSubPage('sub-change-pin');
+    showToast('Console passcode updated');
+};
+window.openRulesModal=()=>{haptic();updateAuthStatusBanner();$('rules-modal').style.display='flex';};
+window.copyRules=()=>{navigator.clipboard?.writeText(`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if request.auth != null;\n    }\n  }\n}`);showToast('Rules copied');};
+
+window.exportEcosystemJson=()=>{
+    haptic();
+    const payload={exportedAt:new Date().toISOString(),counts:{users:usersList.length,businesses:bizList.length,cards:cardsList.length,offers:offersList.length,tickets:ticketsList.length,transactions:allTxList.length},users:usersList,businesses:bizList,cards:cardsList,offers:offersList,giftCards:giftsList,supportTickets:ticketsList};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=`nexo_ecosystem_backup_${Date.now()}.json`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showToast('Backup downloaded');
+};
+
+window.purgeResolvedTickets=async()=>{
+    haptic();
+    const closed=ticketsList.filter(t=>(t.status||'open')==='resolved');
+    if(!closed.length){showToast('No resolved chats to clear');return;}
+    await Promise.all(closed.map(t=>db.collection("supportTickets").doc(t.id).delete().catch(()=>{})));
+    showToast(`Cleared ${closed.length} resolved entries`);
+};
+
+window.clearGlobalBroadcasts=async()=>{
+    haptic();
+    try{
+        const s=await db.collection("notifications").where("targetPhone","==","ALL").get();
+        if(s.empty){showToast('No global broadcasts found');return;}
+        await Promise.all(s.docs.map(d=>db.collection("notifications").doc(d.id).delete().catch(()=>{})));
+        showToast(`Cleared ${s.size} broadcasts`);
+    }catch(e){showToast('Unable to clear broadcasts');}
+};
+</script>
+</body>
+</html>
