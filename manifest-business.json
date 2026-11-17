@@ -1,0 +1,32 @@
+{
+  "id": "/business",
+  "name": "NEXO Business",
+  "short_name": "NEXO Biz",
+  "description": "Agent & Merchant operations wallet for Cash In, B2B float, DPS and settlements.",
+  "start_url": "/business",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#09090b",
+  "background_color": "#000000",
+  "icons": [
+    {
+      "src": "/icons/pwa-business-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/pwa-business-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/pwa-business-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
