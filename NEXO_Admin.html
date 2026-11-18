@@ -302,7 +302,7 @@ body.light-theme .modal-overlay{background:rgba(15,23,42,.28)}
 
 .rules-warn{display:none;align-items:center;justify-content:space-between;gap:8px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.32);color:var(--warn);border-radius:12px;padding:9px 12px;margin-bottom:10px;font-size:11px;font-weight:600}
 </style>
-<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+<script src="/_aistudio-iframe.js?v=29045eb3"></script></head>
 <body>
 <div class="app-container">
     <div id="silent-toast" class="silent-toast"><i class='bx bx-check' style="color:var(--accent);font-size:16px;"></i><span id="silent-toast-text">Done</span></div>
@@ -994,7 +994,9 @@ const db=firebase.firestore();
         ref.add=function(doc){
             try{
                 if(doc&&!doc._skipPush&&colName==='notifications'){
-                    window.nexoSendPush({targetPhone:doc.targetPhone||'',targetEmail:doc.targetEmail||'',targetApp:doc.targetApp||'all',title:doc.title||'NEXO Admin Alert',body:doc.message||doc.body||'You have a new update from NEXO Operations.'});
+                    const dt=new Date(),pad2=(n)=>String(n).padStart(2,'0');
+                    const timeTxt=`${pad2(dt.getDate())}/${pad2(dt.getMonth()+1)}/${dt.getFullYear()} ${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
+                    window.nexoSendPush({targetPhone:doc.targetPhone||'',targetEmail:doc.targetEmail||'',targetApp:doc.targetApp||'all',title:`NEXO Official • ${doc.title||'Notice'}`,body:`${doc.message||doc.body||'You have a new update from NEXO Operations.'} at ${timeTxt}.`});
                 }
             }catch(e){}
             return _origAdd(doc);

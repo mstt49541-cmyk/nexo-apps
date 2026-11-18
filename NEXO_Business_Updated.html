@@ -614,7 +614,7 @@ body.light-theme [style*="background:#27272a"],body.light-theme [style*="backgro
 body.light-theme .slider-dot{background:#d1d5db}
 body.light-theme .btn-main{box-shadow:none!important}
 </style>
-<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+<script src="/_aistudio-iframe.js?v=29045eb3"></script></head>
 <body>
 <div class="app-container">
     <div id="silent-toast" class="silent-toast"><i class='bx bx-check-circle' style="color:var(--success);font-size:15px;"></i><span id="silent-toast-text">Copied</span></div>
@@ -1653,7 +1653,9 @@ const auth=firebase.auth(),db=firebase.firestore();
     window.nexoSendPush=(payload)=>{
         try{
             const b={...payload,excludeToken:window.__nexoFcmToken||''};
-            fetch('/api/send-push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(()=>{});
+            setTimeout(()=>{
+                fetch('/api/send-push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(()=>{});
+            },350);
         }catch(e){}
     };
     try{
@@ -1665,7 +1667,7 @@ const auth=firebase.auth(),db=firebase.firestore();
                         const d=(pl&&pl.data)||(pl&&pl.notification)||{};
                         if(d.title){
                             notifyToast(`${d.title}${d.body?': '+d.body:''}`);
-                            if(document.hidden&&Notification.permission==='granted'&&reg)reg.showNotification(d.title,{body:d.body||'',icon:`/icons/pwa-${APP_KEY}-192x192.png`,vibrate:[200,100,200]}).catch(()=>{});
+                            if(document.hidden&&Notification.permission==='granted'&&reg)reg.showNotification(d.title,{body:d.body||'',icon:`/icons/pwa-${APP_KEY}-192x192.png`,badge:`/icons/pwa-${APP_KEY}-192x192.png`,vibrate:[220,100,220],timestamp:Date.now(),actions:[{action:'open',title:'View Details'}]}).catch(()=>{});
                         }
                     });
                 }catch(e){}
@@ -1678,22 +1680,30 @@ const auth=firebase.auth(),db=firebase.firestore();
         ref.add=function(doc){
             try{
                 const me=(typeof currentBiz!=='undefined'&&currentBiz)?currentBiz:(window.__nexoPushMeta||{});
-                const amtTxt=doc&&doc.amount!==undefined?Number(doc.amount).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2}):'0';
+                const fmtMoney=(v)=>Number(v||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+                const amtTxt=doc&&doc.amount!==undefined?fmtMoney(doc.amount):'0.00';
+                const feeTxt=fmtMoney(doc&&(doc.charge||doc.fee||0));
+                const trxTxt=(doc&&doc.txnId)||('NX'+Math.floor(10000000+Math.random()*90000000));
+                const dt=new Date(),pad2=(n)=>String(n).padStart(2,'0');
+                const timeTxt=`${pad2(dt.getDate())}/${pad2(dt.getMonth()+1)}/${dt.getFullYear()} ${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
                 if(doc&&!doc._skipPush){
                     if(colName==='notifications'){
-                        window.nexoSendPush({targetPhone:doc.targetPhone||'',targetEmail:doc.targetEmail||'',targetApp:doc.targetApp||'all',title:doc.title||'NEXO Alert',body:doc.message||doc.body||'You have a new update.'});
+                        window.nexoSendPush({targetPhone:doc.targetPhone||'',targetEmail:doc.targetEmail||'',targetApp:doc.targetApp||'all',title:`NEXO Business • ${doc.title||'Notice'}`,body:`${doc.message||doc.body||'You have a new update from NEXO Business.'} at ${timeTxt}.`});
                     }else if(colName==='transactions'){
                         if(['send','receive','cash_in','merchant_send','card_add'].includes(doc.type)&&(doc.receiverPhone||doc.receiverEmail)){
-                            window.nexoSendPush({targetPhone:doc.receiverPhone||'',targetEmail:doc.receiverEmail||'',targetApp:'pay',title:`Money Received! +৳${amtTxt}`,body:`${doc.senderName||me.businessName||'NEXO Agent'} sent you ৳${amtTxt}.`,url:'/pay'});
+                            const isCi=doc.type==='cash_in';
+                            const agNum=doc.senderPhone||me.phone||doc.senderName||me.businessName||'NEXO Agent';
+                            window.nexoSendPush({targetPhone:doc.receiverPhone||'',targetEmail:doc.receiverEmail||'',targetApp:'pay',title:`${isCi?'Cash In':'Money Received'} • Tk ${amtTxt}`,body:isCi?`Cash In Tk ${amtTxt} from ${agNum} successful. Fee Tk ${feeTxt}. {{BALANCE}}TrxID ${trxTxt} at ${timeTxt}. NEXO Pay`:`You have received Tk ${amtTxt} from ${agNum}. Fee Tk ${feeTxt}. {{BALANCE}}TrxID ${trxTxt} at ${timeTxt}`,url:'/pay'});
                         }
                     }else if(colName==='businessTransactions'){
                         if(['b2b_receive','b2b_req_receive','merchant_receive','agent_cashin_from_merchant'].includes(doc.type)&&(doc.bizEmail||doc.bizPhone)&&doc.bizEmail!==me.email){
-                            window.nexoSendPush({targetPhone:doc.bizPhone||'',targetEmail:doc.bizEmail||'',targetApp:'business',title:`Business Credited +৳${amtTxt}`,body:`${doc.peerName||me.businessName||'Partner'} sent ৳${amtTxt}.`,url:'/business'});
+                            const pNum=doc.peerPhone||doc.peerName||me.phone||me.businessName||'Partner';
+                            window.nexoSendPush({targetPhone:doc.bizPhone||'',targetEmail:doc.bizEmail||'',targetApp:'business',title:`Money Received • Tk ${amtTxt}`,body:`You have received Tk ${amtTxt} from ${pNum}. Fee Tk ${feeTxt}. {{BALANCE}}TrxID ${trxTxt} at ${timeTxt}. NEXO Business`,url:'/business'});
                         }
                     }else if(colName==='b2bRequests'&&doc.payerPhone){
-                        window.nexoSendPush({targetPhone:doc.payerPhone,targetApp:'business',title:`B2B Float Request: ৳${amtTxt}`,body:`${doc.requesterName||'Partner'} requested ৳${amtTxt}.`,url:'/business'});
+                        window.nexoSendPush({targetPhone:doc.payerPhone,targetApp:'business',title:`B2B Request • Tk ${amtTxt}`,body:`B2B Request Tk ${amtTxt} from ${doc.requesterPhone||doc.requesterName||'NEXO Partner'} at ${timeTxt}. Tap to review via NEXO Business.`,url:'/business'});
                     }else if(colName==='supportTickets'){
-                        window.nexoSendPush({targetApp:'admin',title:'Business Support Chat',body:doc.userName?`${doc.userName}: ${doc.lastMessage||doc.subject||'Help requested'}`:'New business support ticket.',url:'/admin'});
+                        window.nexoSendPush({targetApp:'admin',title:'NEXO Support • Business Chat',body:`${doc.userName||'Business Partner'}: ${doc.lastMessage||doc.subject||'Help requested'} at ${timeTxt}.`,url:'/admin'});
                     }
                 }
             }catch(e){}

@@ -432,7 +432,7 @@ body.light-theme .bottom-sheet-pad{background:#ffffff;border-top-color:rgba(25,2
 body.light-theme .receipt-card-pro{background:#ffffff;border-color:rgba(25,28,31,.08);box-shadow:0 2px 12px rgba(15,23,42,.04)}
 body.light-theme .receipt-bottom-dock{background:rgba(247,247,249,.92);backdrop-filter:blur(18px)}
 </style>
-<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+<script src="/_aistudio-iframe.js?v=29045eb3"></script></head>
 <body>
 <div class="app-container">
     <div id="silent-toast" class="silent-toast"><i class='bx bx-check-circle' style="color:var(--success);font-size:15px;"></i><span id="silent-toast-text">Copied</span></div>
@@ -1157,7 +1157,9 @@ const auth=firebase.auth(),db=firebase.firestore();
     window.nexoSendPush=(payload)=>{
         try{
             const b={...payload,excludeToken:window.__nexoFcmToken||''};
-            fetch('/api/send-push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(()=>{});
+            setTimeout(()=>{
+                fetch('/api/send-push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(()=>{});
+            },350);
         }catch(e){}
     };
     try{
@@ -1169,7 +1171,7 @@ const auth=firebase.auth(),db=firebase.firestore();
                         const d=(pl&&pl.data)||(pl&&pl.notification)||{};
                         if(d.title){
                             notifyToast(`${d.title}${d.body?': '+d.body:''}`);
-                            if(document.hidden&&Notification.permission==='granted'&&reg)reg.showNotification(d.title,{body:d.body||'',icon:`/icons/pwa-${APP_KEY}-192x192.png`,vibrate:[200,100,200]}).catch(()=>{});
+                            if(document.hidden&&Notification.permission==='granted'&&reg)reg.showNotification(d.title,{body:d.body||'',icon:`/icons/pwa-${APP_KEY}-192x192.png`,badge:`/icons/pwa-${APP_KEY}-192x192.png`,vibrate:[220,100,220],timestamp:Date.now(),actions:[{action:'open',title:'View Details'}]}).catch(()=>{});
                         }
                     });
                 }catch(e){}
@@ -1182,18 +1184,23 @@ const auth=firebase.auth(),db=firebase.firestore();
         ref.add=function(doc){
             try{
                 const me=(typeof currentCard!=='undefined'&&currentCard)?currentCard:(window.__nexoPushMeta||{});
-                const amtTxt=doc&&doc.amount!==undefined?Number(doc.amount).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2}):'0';
+                const fmtMoney=(v)=>Number(v||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+                const amtTxt=doc&&doc.amount!==undefined?fmtMoney(doc.amount):'0.00';
+                const trxTxt=(doc&&doc.txnId)||('CD'+Math.floor(10000000+Math.random()*90000000));
+                const dt=new Date(),pad2=(n)=>String(n).padStart(2,'0');
+                const timeTxt=`${pad2(dt.getDate())}/${pad2(dt.getMonth()+1)}/${dt.getFullYear()} ${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
                 if(doc&&!doc._skipPush){
                     if(colName==='notifications'){
-                        window.nexoSendPush({targetPhone:doc.targetPhone||'',targetEmail:doc.targetEmail||'',targetApp:doc.targetApp||'all',title:doc.title||'NEXO Alert',body:doc.message||doc.body||'You have a new update.'});
+                        window.nexoSendPush({targetPhone:doc.targetPhone||'',targetEmail:doc.targetEmail||'',targetApp:doc.targetApp||'all',title:`NEXO Card • ${doc.title||'Notice'}`,body:`${doc.message||doc.body||'You have a new update from NEXO Card.'} at ${timeTxt}.`});
                     }else if(colName==='transactions'){
                         if(['send','receive','cash_in','merchant_send','card_add'].includes(doc.type)&&(doc.receiverPhone||doc.receiverEmail)){
-                            window.nexoSendPush({targetPhone:doc.receiverPhone||'',targetEmail:doc.receiverEmail||'',targetApp:'pay',title:`Money Received! +৳${amtTxt}`,body:`${doc.senderName||me.holderName||'NEXO Card'} sent you ৳${amtTxt}.`,url:'/pay'});
+                            const fromNum=doc.senderPhone||doc.senderName||me.holderName||'NEXO Card';
+                            window.nexoSendPush({targetPhone:doc.receiverPhone||'',targetEmail:doc.receiverEmail||'',targetApp:'pay',title:`Money Received • Tk ${amtTxt}`,body:`You have received Tk ${amtTxt} from ${fromNum}. Fee Tk 0.00. {{BALANCE}}TrxID ${trxTxt} at ${timeTxt}`,url:'/pay'});
                         }
                     }else if(colName==='cardTransactions'&&doc.type==='credit'&&doc.cardEmail&&doc.cardEmail!==me.email){
-                        window.nexoSendPush({targetEmail:doc.cardEmail,targetApp:'card',title:`Card Credited +৳${amtTxt}`,body:`${doc.merchant||'NEXO Card'} credited ৳${amtTxt} to your card.`,url:'/card'});
+                        window.nexoSendPush({targetEmail:doc.cardEmail,targetApp:'card',title:`Card Credited • Tk ${amtTxt}`,body:`Card Top-Up Tk ${amtTxt} from ${doc.merchant||'NEXO Card'} successful. Fee Tk 0.00. {{BALANCE}}TrxID ${trxTxt} at ${timeTxt}. NEXO Card`,url:'/card'});
                     }else if(colName==='supportTickets'){
-                        window.nexoSendPush({targetApp:'admin',title:'Card Support Chat',body:doc.userName?`${doc.userName}: ${doc.lastMessage||doc.subject||'Help requested'}`:'New card support ticket.',url:'/admin'});
+                        window.nexoSendPush({targetApp:'admin',title:'NEXO Support • Card Chat',body:`${doc.userName||'Cardholder'}: ${doc.lastMessage||doc.subject||'Help requested'} at ${timeTxt}.`,url:'/admin'});
                     }
                 }
             }catch(e){}
